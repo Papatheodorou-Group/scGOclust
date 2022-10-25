@@ -138,7 +138,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 #' @return standard analyzed GO seurat object until findAllMarkers
 #' @examples
 #' \dontrun{
-#'
+#' analyzeGOSeurat(go_seurat_obj)
 #' }
 #' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData RunPCA FindNeighbors FindClusters RunUMAP FindAllMarkers
 #' @export
@@ -167,7 +167,7 @@ analyzeGOSeurat <- function(go_seurat_obj){
 #' @return a table of scaled GO representation per cell type (averaged)
 #' @examples
 #' \dontrun{
-#'
+#' getCellTypeGO(go_seurat_obj, cell_type_col)
 #' }
 #' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData AverageExpression
 #' @export
@@ -182,7 +182,98 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col){
   go_seurat_obj <- ScaleData(object = go_seurat_obj, verbose = FALSE)
 
   tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, slot = 'scale.data')
-  return(tbl[['RNA']])
+  return(as.data.frame(tbl[['RNA']]))
 
 }
+
+
+#' calculate correlation between cell types represented by scaled GO, per-species
+#' @name cellTypeGOCorr
+#' @param cell_type_go cell type GO table calculated via getCellTypeGO
+#' @param corr_method correlation method, choose among "pearson", "kendall", "spearman", default 'pearson'
+#' @return a dataframe with correlation between cell types
+#' @examples
+#' \dontrun{
+#' cellTypeGOCorr(cell_type_go, corr_method = 'pearson')
+#' }
+#' @importFrom stats cor
+#' @export
+#'
+
+
+cellTypeGOCorr <- function(cell_type_go, corr_method = 'pearson'){
+
+  cell_type_go = as.data.frame(cell_type_go)
+  all_cell_types = colnames(cell_type_go)
+  corr_matrix = data.frame()
+
+  for(cell_type_1 in all_cell_types){
+
+    for(cell_type_2 in all_cell_types){
+
+      corr_val = stats::cor(cell_type_go[, cell_type_1], cell_type_go[, cell_type_2], method = corr_method)
+
+      corr_matrix[cell_type_1, cell_type_2] = corr_val
+
+    }
+
+  }
+
+  return(corr_matrix)
+
+}
+
+#' calculate cross-species correlation between cell types represented by scaled GO
+#' @name crossSpeciesCellTypeGOCorr
+#' @param species_1 name of species one
+#' @param species_2 name of species two
+#' @param cell_type_go_sp1 cell type GO table of species one calculated via getCellTypeGO
+#' @param cell_type_go_sp2 cell type GO table of species two calculated via getCellTypeGO
+#' @param corr_method correlation method, choose among "pearson", "kendall", "spearman", default 'pearson'
+#' @return correlation between cell types
+#' @examples
+#' \dontrun{
+#' crossSpeciesCellTypeGOCorr(species_1, species_2, cell_type_go_sp1, cell_type_go_sp2, corr_method='pearson')
+#' }
+#' @importFrom stats cor
+#' @export
+#'
+
+crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, cell_type_go_sp2, corr_method='pearson'){
+
+
+  cell_type_go_sp1 = as.data.frame(cell_type_go_sp1)
+  cell_type_go_sp2 = as.data.frame(cell_type_go_sp2)
+
+  all_cell_types_sp1 = colnames(cell_type_go_sp1)
+  all_cell_types_sp2 = colnames(cell_type_go_sp2)
+
+  ## take intersection of GO terms
+  intersection = intersect(rownames(cell_type_go_sp1), rownames(cell_type_go_sp2))
+  cell_type_go_sp1 = cell_type_go_sp1[intersection, ]
+  cell_type_go_sp2 = cell_type_go_sp2[intersection, ]
+
+  if(!(all(rownames(cell_type_go_sp1) == rownames(cell_type_go_sp2)))) {
+
+    stop("cross-species matching of GO terms failed, please check input")
+  }
+
+  corr_matrix = data.frame()
+
+  for(cell_type_1 in all_cell_types_sp1){
+
+    for(cell_type_2 in all_cell_types_sp2){
+
+      corr_val = stats::cor(cell_type_go_sp1[, cell_type_1], cell_type_go_sp2[, cell_type_2], method = corr_method)
+
+      corr_matrix[paste0(species_1, "_", cell_type_1), paste0(species_2, "_", cell_type_2)] = corr_val
+
+    }
+
+  }
+
+  return(corr_matrix)
+
+}
+
 

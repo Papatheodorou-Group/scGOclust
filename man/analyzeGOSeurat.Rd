@@ -19,6 +19,6 @@ standard seurat analysis on GO_seurat object
 }
 \examples{
 \dontrun{
-
+analyzeGOSeurat(go_seurat_obj)
 }
 }

@@ -19,6 +19,6 @@ get per cell type average scaled vector of GO terms
 }
 \examples{
 \dontrun{
-
+getCellTypeGO(go_seurat_obj, cell_type_col)
 }
 }
