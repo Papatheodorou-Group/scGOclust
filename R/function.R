@@ -40,7 +40,7 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
     print(w)
   }, error = function(e) {
     message("ensembl biomaRt error:")
-    printe
+    print(e)
   }, finally={
     message("query biomaRt successful")
   })
