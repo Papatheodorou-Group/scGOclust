@@ -139,17 +139,17 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 #' @name analyzeGOSeurat
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
-#' @return standard analyzed GO seurat object until findAllMarkers
+#' @return standard analyzed GO seurat object until UMAP
 #' @examples
 #' \dontrun{
 #' analyzeGOSeurat(go_seurat_obj)
 #' }
-#' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData RunPCA FindNeighbors FindClusters RunUMAP FindAllMarkers
+#' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData RunPCA FindNeighbors FindClusters RunUMAP Idents
 #' @export
 #'
 
 
-analyzeGOSeurat <- function(go_seurat_obj){
+analyzeGOSeurat <- function(go_seurat_obj, cell_type_col){
 
   go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
   go_seurat_obj <- FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
@@ -159,8 +159,8 @@ analyzeGOSeurat <- function(go_seurat_obj){
   go_seurat_obj <- FindClusters(go_seurat_obj, resolution = 1)
   go_seurat_obj <- RunUMAP(object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
                     dims = 1:50)
-  go_seurat_obj <- FindAllMarkers(go_seurat_obj, test.use = "wilcox")
-
+  Idents(go_seurat_obj) <-  go_seurat_obj@meta.data[[cell_type_col]]
+  return(go_seurat_obj)
 
 }
 
@@ -280,6 +280,125 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
   }
 
   return(corr_matrix)
+
+}
+
+
+#' calculate cross-species correlation between cell types represented by scaled GO
+#' @name getCellTypeSharedGO
+#' @param species_1 name of species one
+#' @param species_2 name of species two
+#' @param analyzed_go_seurat_sp1 analyzed GO seurat object of species one
+#' @param analyzed_go_seurat_sp2 analyzed GO seurat object of species two
+#' @param cell_type_col_sp1 cell type column name for species 1 data
+#' @param cell_type_col_sp2 cell type column name for species 2 data
+#' @param p_val_threshould p value threshold for selecting DEG (p_adjust)
+#' @return shared up and down regulated GO terms per cell type pair
+#' @examples
+#' \dontrun{
+#' getCellTypeSharedGO(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, p_val_threshould = 0.01)
+#' }
+#' @importFrom Seurat FindAllMarkers
+#' @import limma
+#' @importFrom dplyr filter mutate
+#' @export
+#'
+
+
+getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, p_val_threshould = 0.01){
+
+  message(paste0("calculate cell type marker for species ", species_1, ", this will take a while"))
+  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = 'counts', test.use = 'wilcox', verbose = TRUE)
+
+  message(paste0("calculate cell type marker for species ", species_2, ", this will take a while"))
+  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = 'counts', test.use = 'wilcox', verbose = TRUE)
+
+
+  sp1_cts = levels(factor(analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]))
+  sp2_cts = levels(factor(analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]))
+
+  message("collect shared up regulated terms")
+
+  shared_all = data.frame()
+  for (ct_sp1 in sp1_cts){
+
+    for(ct_sp2 in sp2_cts){
+
+      sp1_sig_up = sp1_markers %>% filter(cluster == ct_sp1) %>%
+        filter(avg_log2FC > 0) %>%
+        filter(p_val_adj < p_val_threshould) %>%
+        mutate(marker_type = 'sig_up')
+
+      sp1_sig_up_terms = sp1_sig_up$gene
+
+      sp2_sig_up = sp2_markers %>% filter(cluster == ct_sp2) %>%
+        filter(avg_log2FC > 0) %>%
+        filter(p_val_adj < p_val_threshould) %>%
+        mutate(marker_type = 'sig_up')
+
+      sp2_sig_up_terms = sp2_sig_up$gene
+
+      intersect = intersect(sp1_sig_up_terms, sp2_sig_up_terms)
+
+      sp1_sig_up <- sp1_sig_up %>% filter(gene %in% intersect) %>%
+        mutate(pct_intersect = length(intersect) / length(sp1_sig_up_terms))
+
+      sp2_sig_up <- sp2_sig_up %>% filter(gene %in% intersect) %>%
+        mutate(pct_intersect = length(intersect) / length(sp2_sig_up_terms))
+
+      nr <- max(nrow(sp1_sig_up), nrow(sp2_sig_up))
+
+      shared = cbind(sp1_sig_up[1:nr, ], sp2_sig_up[1:nr, ])
+
+      shared_all = rbind(shared_all, shared)
+
+    }
+
+  }
+
+
+  message("collect shared down regulated terms")
+  for (ct_sp1 in sp1_cts){
+
+    for(ct_sp2 in sp2_cts){
+
+      sp1_sig_down = sp1_markers %>% filter(cluster == ct_sp1) %>%
+        filter(avg_log2FC < 0) %>%
+        filter(p_val_adj < p_val_threshould) %>%
+        mutate(marker_type = 'sig_down')
+
+      sp1_sig_down_terms = sp1_sig_down$gene
+
+      sp2_sig_down = sp2_markers %>% filter(cluster == ct_sp2) %>%
+        filter(avg_log2FC < 0) %>%
+        filter(p_val_adj < p_val_threshould) %>%
+        mutate(marker_type = 'sig_down')
+
+      sp2_sig_down_terms = sp2_sig_down$gene
+
+      intersect = intersect(sp1_sig_down_terms, sp2_sig_down_terms)
+
+      sp1_sig_down <- sp1_sig_down %>% filter(gene %in% intersect) %>%
+        mutate(pct_intersect = length(intersect) / length(sp1_sig_down_terms))
+
+      sp2_sig_down <- sp2_sig_down %>% filter(gene %in% intersect) %>%
+        mutate(pct_intersect = length(intersect) / length(sp2_sig_down_terms))
+
+      nr <- max(nrow(sp1_sig_down), nrow(sp2_sig_down))
+
+      shared = cbind(sp1_sig_down[1:nr, ], sp2_sig_down[1:nr, ])
+
+      shared_all = rbind(shared_all, shared)
+
+    }
+
+
+    shared_all$species_1 = species_1
+    shared_all$species_2 = species_2
+    message('finish cel type pairs shared up and down regulated GO terms')
+    return(shared_all)
+
+  }
 
 }
 

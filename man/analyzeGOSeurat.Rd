@@ -4,7 +4,7 @@
 \alias{analyzeGOSeurat}
 \title{standard seurat analysis on GO_seurat object}
 \usage{
-analyzeGOSeurat(go_seurat_obj)
+analyzeGOSeurat(go_seurat_obj, cell_type_col)
 }
 \arguments{
 \item{go_seurat_obj}{go seurat object created by makeGOSeurat}
@@ -12,7 +12,7 @@ analyzeGOSeurat(go_seurat_obj)
 \item{cell_type_col}{column name in mera.data storing cell type classes}
 }
 \value{
-standard analyzed GO seurat object until findAllMarkers
+standard analyzed GO seurat object until UMAP
 }
 \description{
 standard seurat analysis on GO_seurat object
