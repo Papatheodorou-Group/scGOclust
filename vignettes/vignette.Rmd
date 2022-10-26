@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+library(Seurat)
+library(SeuratDisk)
+devtools::load_all('.')
+
+```
+```{r}
+mmu_tbl = ensemblToGo(species = 'mmusculus')
+dme_tbl = ensemblToGo(species = 'dmelanogaster')
+mmu_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/mmusculus_cell_ontology_mapped.h5seurat')
+dme_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/fca_heart_no_dying_cells_dense.h5seurat')
+
+
+```
+
+```{r}
+mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'ensembl_gene_id', seurat_obj = mmu_obj)
+
+dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gene_name', seurat_obj = dme_obj)
+
+```
+
+```{r}
+mmu_ct_go <- getCellTypeGO(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_ontology_mapped')
+dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
+
+```
+
+```{r}
+
+corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanogaster', cell_type_go_sp1 = mmu_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
+
+```
+
+```{r,  fig.width = 4,  fig.height = 6}
+library(pheatmap)
+pheatmap(corr)
+
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

@@ -86,6 +86,7 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
 #' makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene_id')
 #' }
 #' @importFrom biomaRt useMart useDataset getBM
+#' @importFrom Matrix Matrix
 #' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider
 #' @importFrom tibble column_to_rownames
@@ -97,16 +98,17 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
 
 makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene_id'){
 
+  message("collect data")
   counts = as.matrix(seurat_obj@assays$RNA@counts)
 
   ## pivot GO to feature type table to matrix
-  go_matrix = tbl %>% dplyr::mutate(placehold = 1) %>%
-    tidyr::pivot_wider(id_cols = ensembl_gene_id, names_from = name_1006, values_from = placehold, values_fill = 0, values_fn = 'first')
+  go_matrix = ensembl_to_GO %>% dplyr::mutate(placehold = 1) %>%
+    tidyr::pivot_wider(id_cols = eval(feature_type), names_from = name_1006, values_from = placehold, values_fill = 0, values_fn = dplyr::first)
 
   shared = intersect(go_matrix[[feature_type]], rownames(counts))
 
-  go_matrix <- go_matrix %>% dplyr::filter(ensembl_gene_id %in% shared) %>% dplyr::arrange(ensembl_gene_id)
-  go_matrix = go_matrix %>% tibble::column_to_rownames(feature_type)
+  go_matrix <- go_matrix %>% dplyr::filter(get(feature_type) %in% shared) %>% dplyr::arrange(get(feature_type))
+  go_matrix = go_matrix %>% tibble::column_to_rownames(eval(feature_type))
 
   counts = t(counts)
   counts = counts %>% as.data.frame()
@@ -119,9 +121,13 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
     stop("error during calculation, please check input format")
   }
 
-  message("compute GO to cell matrix")
-  go_mtx = as.matrix(counts) %*% as.matrix(go_matrix)
-  go_obj <- CreateSeuratObject(counts = t(go_mtx), meta.data = obj@meta.data)
+  message("compute GO to cell matrix, might take a few secs")
+  start_time = Sys.time()
+  go_mtx = Matrix::Matrix(as.matrix(counts), sparse = TRUE) %*% Matrix::Matrix(as.matrix(go_matrix), sparse = TRUE)
+  go_obj <- CreateSeuratObject(counts = t(as.matrix(go_mtx)), meta.data = seurat_obj@meta.data)
+  end_time = Sys.time()
+
+  message(paste0('time used: ', round(end_time - start_time, 2), " secs"))
 
   message("returning GO Seurat object")
   return(go_obj)
@@ -173,11 +179,16 @@ analyzeGOSeurat <- function(go_seurat_obj){
 
 getCellTypeGO <- function(go_seurat_obj, cell_type_col){
 
+  if(!(cell_type_col %in% colnames(go_seurat_obj@meta.data))){
+
+    stop("cell_type_col not in metadata, please check input")
+  }
+
   go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
 
   go_seurat_obj <- FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
 
-  go_seurat_obj <- ScaleData(object = go_seurat_obj, verbose = FALSE)
+  go_seurat_obj <- ScaleData(object = go_seurat_obj, verbose = FALSE, scale.max = 10000) ## set scale.max to near-unlimited
 
   tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, slot = 'scale.data')
   return(as.data.frame(tbl[['RNA']]))
