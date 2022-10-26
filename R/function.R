@@ -153,7 +153,7 @@ analyzeGOSeurat <- function(go_seurat_obj){
 
   go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
   go_seurat_obj <- FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
-  go_seurat_obj <- ScaleData(object = go_seurat_obj, verbose = FALSE)
+  go_seurat_obj <- ScaleData(object = go_seurat_obj,  features = rownames(go_seurat_obj), verbose = FALSE)
   go_seurat_obj <- RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE)
   go_seurat_obj <- FindNeighbors(go_seurat_obj, dims = 1:50)
   go_seurat_obj <- FindClusters(go_seurat_obj, resolution = 1)
@@ -186,9 +186,7 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col){
 
   go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
 
-  go_seurat_obj <- FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
-
-  go_seurat_obj <- ScaleData(object = go_seurat_obj, verbose = FALSE, scale.max = 10000) ## set scale.max to near-unlimited
+  go_seurat_obj <- ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = TRUE, scale.max = 10000) ## set scale.max to near-unlimited, also use all features
 
   tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, slot = 'scale.data')
   return(as.data.frame(tbl[['RNA']]))
