@@ -48,13 +48,6 @@ pheatmap(dme_corr)
 ```
 
 ```{r}
-library(ggplot2)
-
-pheatmap(corr, angle_col=45)
-```
-
-
-```{r}
 
 corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanogaster', cell_type_go_sp1 = mmu_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
 

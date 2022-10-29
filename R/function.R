@@ -150,6 +150,11 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 
 analyzeGOSeurat <- function(go_seurat_obj, cell_type_col){
 
+  if(!(cell_type_col %in% colnames(go_seurat_obj@meta.data))){
+
+    stop("cell_type_col not in annotation, please check input")
+  }
+
   go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
   go_seurat_obj <- FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
   go_seurat_obj <- ScaleData(object = go_seurat_obj,  features = rownames(go_seurat_obj), verbose = FALSE)
@@ -305,6 +310,17 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 
 
 getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, p_val_threshould = 0.01){
+
+  if(!(cell_type_col_sp1 %in% colnames(analyzed_go_seurat_sp1@meta.data))){
+
+    stop("cell_type_col_sp1 not in annotation, please check input")
+  }
+
+  if(!(cell_type_col_sp2 %in% colnames(analyzed_go_seurat_sp2@meta.data))){
+
+    stop("cell_type_col_sp2 not in annotation, please check input")
+  }
+
 
   message(paste0("calculate cell type marker for species ", species_1, ", this will take a while"))
   sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = 'counts', test.use = 'wilcox', verbose = TRUE)
