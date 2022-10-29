@@ -95,7 +95,6 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
 #'
 #'
 
-
 makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene_id'){
 
   message("collect data")
@@ -284,7 +283,7 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 }
 
 
-#' calculate cross-species correlation between cell types represented by scaled GO
+#' get shared up and down reguated GO terms for al pairs of cell types
 #' @name getCellTypeSharedGO
 #' @param species_1 name of species one
 #' @param species_2 name of species two
