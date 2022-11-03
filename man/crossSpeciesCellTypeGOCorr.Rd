@@ -31,6 +31,6 @@ calculate cross-species correlation between cell types represented by scaled GO
 }
 \examples{
 \dontrun{
-crossSpeciesCellTypeGOCorr(species_1, species_2, cell_type_go_sp1, cell_type_go_sp2, corr_method='pearson')
+crossSpeciesCellTypeGOCorr(species_1, species_2, go_sp1, go_sp2)
 }
 }

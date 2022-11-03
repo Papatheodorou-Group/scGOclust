@@ -90,6 +90,7 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
 #' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider
 #' @importFrom tibble column_to_rownames
+#' @importFrom Seurat CreateSeuratObject
 #' @importFrom dplyr filter mutate arrange select
 #' @export
 #'
@@ -123,7 +124,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
   message("compute GO to cell matrix, might take a few secs")
   start_time = Sys.time()
   go_mtx = Matrix::Matrix(as.matrix(counts), sparse = TRUE) %*% Matrix::Matrix(as.matrix(go_matrix), sparse = TRUE)
-  go_obj <- CreateSeuratObject(counts = t(as.matrix(go_mtx)), meta.data = seurat_obj@meta.data)
+  go_obj <- Seurat::CreateSeuratObject(counts = t(as.matrix(go_mtx)), meta.data = seurat_obj@meta.data)
   end_time = Sys.time()
 
   message(paste0('time used: ', round(end_time - start_time, 2), " secs"))
@@ -155,15 +156,15 @@ analyzeGOSeurat <- function(go_seurat_obj, cell_type_col){
     stop("cell_type_col not in annotation, please check input")
   }
 
-  go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
-  go_seurat_obj <- FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
-  go_seurat_obj <- ScaleData(object = go_seurat_obj,  features = rownames(go_seurat_obj), verbose = FALSE)
-  go_seurat_obj <- RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE)
-  go_seurat_obj <- FindNeighbors(go_seurat_obj, dims = 1:50)
-  go_seurat_obj <- FindClusters(go_seurat_obj, resolution = 1)
-  go_seurat_obj <- RunUMAP(object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
+  go_seurat_obj <- Seurat::NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
+  go_seurat_obj <- Seurat::FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
+  go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj,  features = rownames(go_seurat_obj), verbose = FALSE)
+  go_seurat_obj <- Seurat::RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE)
+  go_seurat_obj <- Seurat::FindNeighbors(go_seurat_obj, dims = 1:50)
+  go_seurat_obj <- Seurat::FindClusters(go_seurat_obj, resolution = 1)
+  go_seurat_obj <- Seurat::RunUMAP(object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
                     dims = 1:50)
-  Idents(go_seurat_obj) <-  go_seurat_obj@meta.data[[cell_type_col]]
+  Seurat::Idents(go_seurat_obj) <-  go_seurat_obj@meta.data[[cell_type_col]]
   return(go_seurat_obj)
 
 }
@@ -244,7 +245,7 @@ cellTypeGOCorr <- function(cell_type_go, corr_method = 'pearson'){
 #' @return correlation between cell types
 #' @examples
 #' \dontrun{
-#' crossSpeciesCellTypeGOCorr(species_1, species_2, cell_type_go_sp1, cell_type_go_sp2, corr_method='pearson')
+#' crossSpeciesCellTypeGOCorr(species_1, species_2, go_sp1, go_sp2)
 #' }
 #' @importFrom stats cor
 #' @export
@@ -300,7 +301,7 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #' @return shared up and down regulated GO terms per cell type pair
 #' @examples
 #' \dontrun{
-#' getCellTypeSharedGO(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, p_val_threshould = 0.01)
+#' getCellTypeSharedGO(species_1, species_2, seurat_sp1, seurat_sp2, col_sp1, col_sp2)
 #' }
 #' @importFrom Seurat FindAllMarkers
 #' @import limma

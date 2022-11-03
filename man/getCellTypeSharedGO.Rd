@@ -37,6 +37,6 @@ get shared up and down reguated GO terms for al pairs of cell types
 }
 \examples{
 \dontrun{
-getCellTypeSharedGO(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, p_val_threshould = 0.01)
+getCellTypeSharedGO(species_1, species_2, seurat_sp1, seurat_sp2, col_sp1, col_sp2)
 }
 }
