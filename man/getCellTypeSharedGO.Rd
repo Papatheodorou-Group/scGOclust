@@ -2,7 +2,7 @@
 % Please edit documentation in R/function.R
 \name{getCellTypeSharedGO}
 \alias{getCellTypeSharedGO}
-\title{calculate cross-species correlation between cell types represented by scaled GO}
+\title{get shared up and down reguated GO terms for al pairs of cell types}
 \usage{
 getCellTypeSharedGO(
   species_1,
@@ -33,7 +33,7 @@ getCellTypeSharedGO(
 shared up and down regulated GO terms per cell type pair
 }
 \description{
-calculate cross-species correlation between cell types represented by scaled GO
+get shared up and down reguated GO terms for al pairs of cell types
 }
 \examples{
 \dontrun{
