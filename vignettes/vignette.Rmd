@@ -47,11 +47,6 @@ dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
 
-```{r}
-library(ggplot2)
-
-pheatmap(corr, angle_col=45)
-```
 
 
 ```{r}
@@ -68,7 +63,7 @@ pheatmap(corr)
 mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_ontology_mapped')
 ```
 ```{r}
-
+dme_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
 ```
 
 

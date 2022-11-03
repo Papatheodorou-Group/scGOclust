@@ -11,61 +11,68 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 library(Seurat)
 library(SeuratDisk)
 library(pheatmap)
+library(slanter)
 devtools::load_all('.')
 
 ```
 ```{r}
-mmu_tbl = ensemblToGo(species = 'mmusculus')
+hsa_tbl = ensemblToGo(species = 'hsapiens')
 dme_tbl = ensemblToGo(species = 'dmelanogaster')
-mmu_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/mca_stomach_intestine_concat_counts.h5seurat')
+hsa_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/ts_small_and_large_intestine_decontX_count.h5seurat')
 dme_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.h5seurat')
 
 
 ```
 
 ```{r}
-mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_gene_name', seurat_obj = mmu_obj)
+hsa_go_obj <- makeGOSeurat(ensembl_to_GO = hsa_tbl, feature_type = 'external_gene_name', seurat_obj = hsa_obj)
 
 dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gene_name', seurat_obj = dme_obj)
 
 ```
 
 ```{r}
-mmu_ct_go <- getCellTypeGO(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')
+hsa_ct_go <- getCellTypeGO(go_seurat_obj = hsa_go_obj, cell_type_col = 'cell_ontology_class_both')
 dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
 
 ```
 
 
-```{r, fig.width = 4,  fig.height = 6}
-mmu_corr = cellTypeGOCorr(cell_type_go = mmu_ct_go, corr_method = 'pearson')
-pheatmap(mmu_corr)
+```{r, fig.width = 10,  fig.height = 10}
+hsa_corr = cellTypeGOCorr(cell_type_go = hsa_ct_go, corr_method = 'pearson')
+pheatmap(hsa_corr)
 ```
 
-```{r, fig.height=4, fig.width=4}
+```{r, fig.height=10, fig.width=10}
 dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
 
 ```{r}
 
-corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanogaster', cell_type_go_sp1 = mmu_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
+corr = crossSpeciesCellTypeGOCorr(species_1 = 'hsapiens', species_2 = 'dmelanogaster', cell_type_go_sp1 = hsa_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
 
 ```
 ```{r,  fig.width = 10,  fig.height = 10}
-pheatmap(corr, filename = 'stomach_and_intestine_unscaled.pdf', width = 10, height = 10)
+pheatmap(corr, filename = 'ts_large_and_snall_intesine_unscaled.pdf', width = 10, height = 10)
 
-pheatmap(corr, scale = 'column', filename = 'stomach_and_intestine_column_scaled.pdf', width = 10, height = 10)
+pheatmap(corr, scale = 'column', filename = 'ts_large_and_snall_intesine_column_scaled.pdf', width = 10, height = 10)
 
 
 ```
 
+```{r,  fig.width = 10,  fig.height = 10}
+
+slanter::sheatmap(corr + 0.5)
+```
+
+
 ```{r}
-mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')
+hsa_go_analyzed = analyzeGOSeurat(go_seurat_obj = hsa_go_obj, cell_type_col = 'cell_ontology_class_both')
 ```
 
 ```{r, fig.width=6}
-DimPlot(mmu_go_analyzed, label = TRUE)
+DimPlot(hsa_go_analyzed, label = TRUE)
 ```
 
 
@@ -82,7 +89,11 @@ DimPlot(dme_go_analyzed, label = TRUE)
 
 
 ```{r}
-ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation')
+ct_shared_go = getCellTypeSharedGO(species_1 = 'hsapiens', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = hsa_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_ontology_class_both', cell_type_col_sp2 = 'annotation')
+```
+
+```{r}
+ct_shared_go %>% to_csv("ts_small_and_large_intestine_ct_shared_go.csv")
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
