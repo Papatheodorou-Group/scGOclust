@@ -304,7 +304,7 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 
 plotCellTypeCorrHeatmap <- function(corr_matrix, scale = 'none', ...){
 
-  heatmap = slanter::sheatmap(corr + 0.5, ...)
+  heatmap = slanter::sheatmap(corr_matrix + 0.5, ...)
   return(heatmap)
 
 }
@@ -459,7 +459,7 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 #'
 
 
-plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1){
+plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1, ...){
 
   links <- corr_matrix %>%
   as.data.frame() %>%

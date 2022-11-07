@@ -4,7 +4,7 @@
 \alias{plotCellTypeSankey}
 \title{plot Sankey diagram for cell type links above a certain threshould}
 \usage{
-plotCellTypeSankey(corr_matrix, corr_threshould = 0.1)
+plotCellTypeSankey(corr_matrix, corr_threshould = 0.1, ...)
 }
 \arguments{
 \item{corr_matrix}{cell type corr matrix from crossSpeciesCellTypeGOCorr}
