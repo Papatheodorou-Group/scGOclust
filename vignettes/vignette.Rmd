@@ -12,6 +12,7 @@ library(Seurat)
 library(SeuratDisk)
 library(pheatmap)
 devtools::load_all('.')
+library(slanter)
 
 ```
 ```{r}
@@ -42,7 +43,7 @@ mmu_corr = cellTypeGOCorr(cell_type_go = mmu_ct_go, corr_method = 'pearson')
 pheatmap(mmu_corr)
 ```
 
-```{r, fig.height=4, fig.width=4}
+```{r, fig.height=10, fig.width=10}
 dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
@@ -54,10 +55,17 @@ pheatmap(dme_corr)
 corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanogaster', cell_type_go_sp1 = mmu_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
 
 ```
-```{r,  fig.width = 4,  fig.height = 6}
+```{r,  fig.width = 8,  fig.height = 8}
 pheatmap(corr)
 
 ```
+```{r,  fig.width = 8,  fig.height = 8}
+slanter::sheatmap(corr + 0.5, file = 'fca_mca_heart_unscaled_sheatmap.pdf', width = 6, height = 8)
+
+slanter::sheatmap(corr + 0.5, scale = 'column', file = 'fca_mca_heart_scaled_sheatmap.pdf', width = 6, height = 8)
+
+```
+
 
 ```{r}
 mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_ontology_mapped')

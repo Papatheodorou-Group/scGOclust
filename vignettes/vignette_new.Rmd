@@ -37,12 +37,12 @@ dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotati
 ```
 
 
-```{r, fig.width = 4,  fig.height = 6}
+```{r, fig.width = 8,  fig.height = 8}
 mmu_corr = cellTypeGOCorr(cell_type_go = mmu_ct_go, corr_method = 'pearson')
 pheatmap(mmu_corr)
 ```
 
-```{r, fig.height=4, fig.width=4}
+```{r, fig.height=8, fig.width=8}
 dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
@@ -55,10 +55,19 @@ corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanog
 ```{r,  fig.width = 10,  fig.height = 10}
 pheatmap(corr, filename = 'stomach_and_intestine_unscaled.pdf', width = 10, height = 10)
 
-pheatmap(corr, scale = 'column', filename = 'stomach_and_intestine_column_scaled.pdf', width = 10, height = 10)
+pheatmap(corr, scale = 'column', filename = 'stomach_and_intestine_column_scaled.pdf', width = 10, height = 10, )
 
 
 ```
+
+```{r,  fig.width = 10,  fig.height = 10}
+
+slanter::sheatmap((corr + 0.5), file = 'stomach_and_intestine_unscaled_sheatmap.pdf', width = 10, height = 10)
+
+slanter::sheatmap((corr + 0.5), scale = 'column', file = 'stomach_and_intestine_scaled_sheatmap.pdf', width = 10, height = 10)
+
+```
+
 
 ```{r}
 mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')

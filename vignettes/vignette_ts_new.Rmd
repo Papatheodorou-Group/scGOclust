@@ -32,7 +32,7 @@ dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gen
 ```
 
 ```{r}
-hsa_ct_go <- getCellTypeGO(go_seurat_obj = hsa_go_obj, cell_type_col = 'cell_ontology_class_both')
+hsa_ct_go <- getCellTypeGO(go_seurat_obj = hsa_go_obj, cell_type_col = 'cell_ontology_class')
 dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
 
 ```
@@ -53,6 +53,8 @@ pheatmap(dme_corr)
 corr = crossSpeciesCellTypeGOCorr(species_1 = 'hsapiens', species_2 = 'dmelanogaster', cell_type_go_sp1 = hsa_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
 
 ```
+
+
 ```{r,  fig.width = 10,  fig.height = 10}
 pheatmap(corr, filename = 'ts_large_and_snall_intesine_unscaled.pdf', width = 10, height = 10)
 
@@ -61,12 +63,21 @@ pheatmap(corr, scale = 'column', filename = 'ts_large_and_snall_intesine_column_
 
 ```
 
-```{r,  fig.width = 10,  fig.height = 10}
+```{r,  fig.width = 6,  fig.height = 6}
+pheatmap(corr, scale = 'column', width = 6, height = 6)
+```
 
-slanter::sheatmap(corr + 0.5)
 
-slanter::sheatmap(corr + 0.5, filename = "ts_small_and_large_intestine_unscaled.pdf", width = 10, height = 12)
-slanter::sheatmap(corr + 0.5, scale = 'column',  filename = "ts_small_and_large_intestine_scaled.pdf", width = 10, height = 12)
+```{r,  fig.width = 6,  fig.height = 6}
+
+slanter::sheatmap(corr + 0.5, scale = 'column', height = 6, width = 6)
+
+```
+
+
+```{r}
+slanter::sheatmap(corr + 0.5, filename = "ts_small_and_large_intestine_combined_unscaled.pdf", width = 10, height = 12)
+slanter::sheatmap(corr + 0.5, scale = 'column',  filename = "ts_small_and_large_intestine_combined_scaled.pdf", width = 10, height = 12)
 
 
 ```

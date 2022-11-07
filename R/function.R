@@ -288,6 +288,28 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 
 }
 
+#' plot clustered heatmap for cell type corr
+#' @name plotCellTypeCorrHeatmap
+#' @param corr_matrix correlation matrix from cellTypeGOCorr or crossSpeciesCellTypeGOCorr
+#' @param scale scale the corr matrix by: 'none', 'row', 'column', default 'none'
+#' @param ... params to pass to slanter::sheatmap
+#' @examples
+#' \dontrun{
+#' plotCellTypeCorrHeatmap(corr_matrix, 'column')
+#' }
+#' @return a sheatmap heatmap
+#' @importFrom slanter sheatmap
+#' @export
+#'
+
+plotCellTypeCorrHeatmap <- function(corr_matrix, scale = 'none', ...){
+
+  heatmap = slanter::sheatmap(corr + 0.5, ...)
+  return(heatmap)
+
+}
+
+
 
 #' get shared up and down reguated GO terms for al pairs of cell types
 #' @name getCellTypeSharedGO
@@ -417,5 +439,102 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
   }
 
 }
+
+#' plot Sankey diagram for cell type links above a certain threshould
+#' @name plotCellTypeSankey
+#' @param corr_matrix cell type corr matrix from crossSpeciesCellTypeGOCorr
+#' @param corr_threshould minimum corr value for positively related cell types, default 0.6
+#' @param ... additional params for sankeyNetwork
+#' @return a Sankey plot showing related cell types
+#' @examples
+#' \dontrun{
+#' plotCellTypeSankey(corr_matrix, 0.1)
+#' }
+#' @importFrom networkD3 sankeyNetwork
+#' @importFrom tibble rownames_to_column
+#' @importFrom dplyr filter
+#' @importFrom tidyr gather
+#' @importFrom magrittr %>%
+#' @export
+#'
+
+
+plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1){
+
+  links <- corr_matrix %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column(var="source") %>%
+  tidyr::gather(key="target", value="value", -1) %>%
+  dplyr::filter(value >= corr_threshould)
+
+  if(nrow(links) == 0) {
+    stop("no cell type pairs pass corr_threshould, please lower threshould")
+  }
+
+  nodes <- data.frame(
+  name=c(as.character(links$source), as.character(links$target)) %>%
+  unique()
+  )
+
+  links$IDsource <- match(links$source, nodes$name)-1
+  links$IDtarget <- match(links$target, nodes$name)-1
+
+  p <- networkD3::sankeyNetwork(Links = links, Nodes = nodes,
+  Source = "IDsource", Target = "IDtarget",
+  Value = "value", NodeID = "name",
+  sinksRight=FALSE, ...)
+
+  return(p)
+
+
+}
+
+
+#' query co-up and co-down regulated GO terms from certain cell type pairs
+#' @name getCellTypeSharedTerms
+#' @param shared_go cell type shared GO table from getCellTypeSharedGO
+#' @param cell_type_sp1 cell type from sp1 to query
+#' @param cell_type_sp2 cell type from sp2 to query
+#' @param return_full if return also pvals and logfc info, default FALSE
+#' @return a dataframe displaying co-up or co-down regulated GO terms for the queried cell type pair
+#' @examples
+#' \dontrun{
+#' getCellTypeSharedTerms(shared_go, cell_type_sp1, cell_type_sp2)
+#' }
+#' @importFrom dplyr select filter
+#' @importFrom magrittr %>%
+#' @export
+#'
+
+
+getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full=FALSE){
+
+  if(!(cell_type_sp1 %in% levels(factor(shared_go[['cluster...7']])))){
+
+    stop("cell type sp1 not in data, please check input")
+  }
+
+  if (!(cell_type_sp2 %in% levels(factor(shared_go[['cluster...16']])))){
+
+    stop("cell type sp2 not in data, please check input")
+  }
+
+  if(!(return_full)){
+
+    shared_go = shared_go %>%
+      dplyr::select(`cluster...7`, `gene...8`, `marker_type...9`,
+                                `cluster...16`, `gene...17`, `marker_type...18`)
+  }
+
+  tbl = shared_go %>%
+    dplyr::filter(`cluster...7` == cell_type_sp1) %>%
+    dplyr::filter(`cluster...16` == cell_type_sp2)
+
+  return(tbl)
+
+}
+
+
+
 
 

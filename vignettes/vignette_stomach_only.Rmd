@@ -11,6 +11,7 @@ Try executing this chunk by clicking the *Run* button within the chunk or by pla
 library(Seurat)
 library(SeuratDisk)
 library(pheatmap)
+library(slanter)
 devtools::load_all('.')
 
 ```
@@ -36,12 +37,12 @@ dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotati
 ```
 
 
-```{r}
+```{r, fig.height=6, fig.width=6}
 mmu_corr = cellTypeGOCorr(cell_type_go = mmu_ct_go, corr_method = 'pearson')
 pheatmap(mmu_corr)
 ```
 
-```{r, fig.height=4, fig.width=4}
+```{r, fig.height=8, fig.width=8}
 dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
@@ -51,6 +52,8 @@ pheatmap(dme_corr)
 corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanogaster', cell_type_go_sp1 = mmu_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
 
 ```
+
+
 ```{r,  fig.width = 8,  fig.height = 7}
 pheatmap(corr, filename = 'stomach_unscaled.pdf', width = 10, height = 7)
 
@@ -71,6 +74,9 @@ ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelano
 ```
 
 
+```{r}
+head(shared_all)
+```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
