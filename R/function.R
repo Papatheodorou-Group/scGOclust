@@ -303,7 +303,7 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 
 plotCellTypeCorrHeatmap <- function(corr_matrix, scale = 'none', ...){
 
-  heatmap = slanter::sheatmap(corr_matrix + 0.5, ...)
+  heatmap = slanter::sheatmap(corr_matrix + 0.5, scale, ...)
   return(heatmap)
 
 }
