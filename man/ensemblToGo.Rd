@@ -8,7 +8,8 @@ ensemblToGo(
   species,
   GO_type = "biological_process",
   GO_linkage_type = c("experimental", "phylogenetic", "computational", "author",
-    "curator", "electronic")
+    "curator", "electronic"),
+  ...
 )
 }
 \arguments{
@@ -16,7 +17,9 @@ ensemblToGo(
 
 \item{GO_type}{GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'}
 
-\item{GO_linkage_type}{GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', defaut all}
+\item{GO_linkage_type}{GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', #' defaut all}
+
+\item{...}{additional args for useEnsembl}
 }
 \value{
 a table with ensembl to GO terms mapping including requested linkage type

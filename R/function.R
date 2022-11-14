@@ -2,19 +2,20 @@
 #' @name ensemblToGo
 #' @param species species name matching ensembl biomaRt naming, such as hsapiens, mmusculus
 #' @param GO_type GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'
-#' @param GO_linkage_type GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', defaut all
+#' @param GO_linkage_type GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', #' defaut all
+#' @param ... additional args for useEnsembl
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
 #' \dontrun{
 #' ensemblToGo(species = 'mmusculus', GO_type = 'biological_process', GO_linkage_type='experimental')
 #' }
-#' @importFrom biomaRt useMart useDataset getBM
+#' @importFrom biomaRt useMart useEnsembl
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter
 #' @export
 #'
 #'
-ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic')) {
+ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic'), ...) {
 
   ## GO source type code
   go_source = list(experimental = c("EXP", 'IDA', 'IPI', 'IMP', 'IGI', 'IEP', 'HTP', 'HDA', 'HMP', 'HGI', 'HEP'),
@@ -24,9 +25,7 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
                    curator = c('IC', 'ND'),
                    electronic = c("IEA"))
 
-
-  bm <- useMart("ensembl")
-  bm <- useDataset(paste0(species, "_gene_ensembl"), mart=bm)
+  bm <- useEnsembl(biomart='ensembl', dataset=paste0(species, "_gene_ensembl"), mirror = "asia", ...)
 
   # Get ensembl gene ids and GO terms
 
