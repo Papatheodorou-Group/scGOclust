@@ -63,14 +63,14 @@ pheatmap(corr, scale = 'column', filename = 'ts_large_and_snall_intesine_column_
 
 ```
 
-```{r,  fig.width = 6,  fig.height = 6}
-pheatmap(corr, scale = 'column', width = 6, height = 6)
+```{r,  fig.width = 10,  fig.height = 10}
+pheatmap(corr, scale = 'column', width = 10, height = 10)
 ```
 
 
-```{r,  fig.width = 6,  fig.height = 6}
+```{r,  fig.width = 10,  fig.height = 10}
 
-slanter::sheatmap(corr + 0.5, scale = 'column', height = 6, width = 6)
+slanter::sheatmap(corr + 0.5, scale = 'column', height = 10, width = 10)
 
 ```
 
@@ -107,9 +107,26 @@ DimPlot(dme_go_analyzed, label = TRUE)
 ```{r}
 ct_shared_go = getCellTypeSharedGO(species_1 = 'hsapiens', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = hsa_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_ontology_class_both', cell_type_col_sp2 = 'annotation')
 ```
+```{r}
+ct_shared_go %>% write_csv("ts_small_and_large_intestine_ct_shared_go.csv")
+```
+
+
+## precomputed for saving vignette running time
+```{r}
+ct_shared_go <- read_csv("ts_small_and_large_intestine_ct_shared_go.csv")
+```
+
+
 
 ```{r}
-ct_shared_go %>% to_csv("ts_small_and_large_intestine_ct_shared_go.csv")
+getCellTypeSharedTerms(shared_go = ct_shared_go, cell_type_sp1 = '', cell_type_sp2 = '', return_full = FALSE)
+```
+
+
+
+```{r}
+plotCellTypeSankey(corr_matrix = corr, corr_threshould = 0.05)
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.

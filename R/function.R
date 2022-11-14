@@ -509,6 +509,13 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1, ...){
 
 getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full=FALSE){
 
+  ## if the ct_shared_go is a dataframe not precomputed from read_csv, but freshly computed
+  if(!('cluster...7' %in% colnames(ct_shared_go))){
+
+    colnames(ct_shared_go) = paste0(colnames(ct_shared_go), "...", c(2:21))
+
+  }
+
   if(!(cell_type_sp1 %in% levels(factor(shared_go[['cluster...7']])))){
 
     stop("cell type sp1 not in data, please check input")

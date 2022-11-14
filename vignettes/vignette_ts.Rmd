@@ -21,7 +21,6 @@ dme_tbl = ensemblToGo(species = 'dmelanogaster')
 hsa_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/ts_small_and_large_intestine_decontX_count.h5seurat')
 dme_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.h5seurat')
 
-
 ```
 
 ```{r}
