@@ -530,16 +530,21 @@ getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, retu
       dplyr::select(`cluster...7`, `gene...8`, `marker_type...9`,
                                 `cluster...16`, `gene...17`, `marker_type...18`)
   }
-
   tbl = shared_go %>%
     dplyr::filter(`cluster...7` == cell_type_sp1) %>%
     dplyr::filter(`cluster...16` == cell_type_sp2)
 
-  return(tbl)
+  
+  tbl_1 = tbl[, 1:9] %>% arrange(`gene...8`)
+  tbl_2 = tbl[, 10:20] %>% arrange(`gene...17`)
+    
+  tbl_final = cbind(tbl_1, tbl_2)
+    
+  
+    
+  return(tbl_final)
 
 }
-
-
 
 
 
