@@ -290,7 +290,6 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #' plot clustered heatmap for cell type corr
 #' @name plotCellTypeCorrHeatmap
 #' @param corr_matrix correlation matrix from cellTypeGOCorr or crossSpeciesCellTypeGOCorr
-#' @param scale scale the corr matrix by: 'none', 'row', 'column', default 'none'
 #' @param ... params to pass to slanter::sheatmap
 #' @examples
 #' \dontrun{
@@ -301,9 +300,9 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #' @export
 #'
 
-plotCellTypeCorrHeatmap <- function(corr_matrix, scale = 'none', ...){
+plotCellTypeCorrHeatmap <- function(corr_matrix, ...){
 
-  heatmap = slanter::sheatmap(corr_matrix + 0.5, scale, ...)
+  heatmap = slanter::sheatmap(corr_matrix + 0.5,  ...)
   return(heatmap)
 
 }
@@ -512,10 +511,10 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1, ...){
 
 getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full=FALSE){
 
-  ## if the ct_shared_go is a dataframe not precomputed from read_csv, but freshly computed
-  if(!('cluster...7' %in% colnames(ct_shared_go))){
+  ## if the shared_go is a dataframe not precomputed from read_csv, but freshly computed
+  if(!('cluster...7' %in% colnames(shared_go))){
 
-    colnames(ct_shared_go) = paste0(colnames(ct_shared_go), "...", c(2:21))
+    colnames(shared_go) = paste0(colnames(shared_go), "...", c(2:21))
 
   }
 
@@ -535,16 +534,21 @@ getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, retu
       dplyr::select(`cluster...7`, `gene...8`, `marker_type...9`,
                                 `cluster...16`, `gene...17`, `marker_type...18`)
   }
-
   tbl = shared_go %>%
     dplyr::filter(`cluster...7` == cell_type_sp1) %>%
     dplyr::filter(`cluster...16` == cell_type_sp2)
 
-  return(tbl)
+  
+  tbl_1 = tbl[, 1:9] %>% arrange(`gene...8`)
+  tbl_2 = tbl[, 10:20] %>% arrange(`gene...17`)
+    
+  tbl_final = cbind(tbl_1, tbl_2)
+    
+  
+    
+  return(tbl_final)
 
 }
-
-
 
 
 
