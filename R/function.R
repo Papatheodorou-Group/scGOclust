@@ -388,7 +388,13 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 
       nr <- max(nrow(sp1_sig_up), nrow(sp2_sig_up))
 
-      shared = cbind(sp1_sig_up[1:nr, ], sp2_sig_up[1:nr, ])
+      sp1_sig_up_use <- sp1_sig_up[1:nr, ]
+      colnames(sp1_sig_up_use) <- paste0("sp1_", colnames(sp1_sig_up_use))
+
+      sp2_sig_up_use <- sp2_sig_up[1:nr, ]
+      colnames(sp2_sig_up_use) <- paste0("sp2_", colnames(sp2_sig_up_use))
+
+      shared = cbind(sp1_sig_up_use, sp2_sig_up_use)
 
       shared_all = rbind(shared_all, shared)
 
@@ -426,7 +432,14 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 
       nr <- max(nrow(sp1_sig_down), nrow(sp2_sig_down))
 
-      shared = cbind(sp1_sig_down[1:nr, ], sp2_sig_down[1:nr, ])
+      sp1_sig_down_use <- sp1_sig_down[1:nr, ]
+      colnames(sp1_sig_down_use) <- paste0("sp1_", colnames(sp1_sig_down_use))
+
+      sp2_sig_down_use <- sp2_sig_down[1:nr, ]
+      colnames(sp2_sig_down_use) <- paste0("sp2_", colnames(sp2_sig_down_use))
+
+      shared = cbind(sp1_sig_down_use, sp2_sig_down_use)
+
 
       shared_all = rbind(shared_all, shared)
 
@@ -538,14 +551,14 @@ getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, retu
     dplyr::filter(`cluster...7` == cell_type_sp1) %>%
     dplyr::filter(`cluster...16` == cell_type_sp2)
 
-  
+
   tbl_1 = tbl[, 1:9] %>% arrange(`gene...8`)
   tbl_2 = tbl[, 10:20] %>% arrange(`gene...17`)
-    
+
   tbl_final = cbind(tbl_1, tbl_2)
-    
-  
-    
+
+
+
   return(tbl_final)
 
 }
