@@ -324,7 +324,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = 'none', ...){
 #' \dontrun{
 #' getCellTypeSharedGO(species_1, species_2, seurat_sp1, seurat_sp2, col_sp1, col_sp2)
 #' }
-#' @importFrom Seurat FindAllMarkers
+#' @importFrom Seurat FindAllMarkers Idents
 #' @import limma
 #' @importFrom dplyr filter mutate
 #' @export
@@ -343,9 +343,13 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
     stop("cell_type_col_sp2 not in annotation, please check input")
   }
 
+  ## set idents for marker calling
+  Seurat::Idents(analyzed_go_seurat_sp1) <-  analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]
+  Seurat::Idents(analyzed_go_seurat_sp2) <-  analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]
+
 
   message(paste0("calculate cell type marker for species ", species_1, ", this will take a while"))
-  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = 'counts', test.use = 'wilcox', verbose = TRUE)
+  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = 'counts', test.use = 'wilcox', verbose = TRUE, )
 
   message(paste0("calculate cell type marker for species ", species_2, ", this will take a while"))
   sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = 'counts', test.use = 'wilcox', verbose = TRUE)
