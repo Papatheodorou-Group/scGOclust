@@ -16,7 +16,7 @@ Author & Maintainer: Yuyao Song <ysong@ebi.ac.uk>
 
 3. Finally, install `scGOclust` from GitHub: 
     
-    `devtools::install_github("YY-SONG0718/scGOclust/")`
+    `devtools::install_github("YY-SONG0718/scGOclust", ref = "main")`
 
 ### Usage
 
