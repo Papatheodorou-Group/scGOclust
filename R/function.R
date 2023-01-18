@@ -25,7 +25,7 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
                    curator = c('IC', 'ND'),
                    electronic = c("IEA"))
 
-  bm <- useEnsembl(biomart='ensembl', dataset=paste0(species, "_gene_ensembl"), mirror = "asia", ...)
+  bm <- useEnsembl(biomart='ensembl', dataset=paste0(species, "_gene_ensembl"), ...)
 
   # Get ensembl gene ids and GO terms
 
