@@ -2,7 +2,7 @@
 #' @name ensemblToGo
 #' @param species species name matching ensembl biomaRt naming, such as hsapiens, mmusculus
 #' @param GO_type GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'
-#' @param GO_linkage_type GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', #' defaut all
+#' @param GO_linkage_type GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', #' defaut remove 'electronic'
 #' @param ... additional args for useEnsembl
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
@@ -15,7 +15,7 @@
 #' @export
 #'
 #'
-ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic'), ...) {
+ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator'), ...) {
 
   ## GO source type code
   go_source = list(experimental = c("EXP", 'IDA', 'IPI', 'IMP', 'IGI', 'IEP', 'HTP', 'HDA', 'HMP', 'HGI', 'HEP'),
@@ -138,6 +138,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 #' @name analyzeGOSeurat
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
+#' @param cluster_res resolution for Seurat FindClusters
 #' @return standard analyzed GO seurat object until UMAP
 #' @examples
 #' \dontrun{
@@ -148,7 +149,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 #'
 
 
-analyzeGOSeurat <- function(go_seurat_obj, cell_type_col){
+analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, cluster_res = 1){
 
   if(!(cell_type_col %in% colnames(go_seurat_obj@meta.data))){
 
@@ -160,7 +161,7 @@ analyzeGOSeurat <- function(go_seurat_obj, cell_type_col){
   go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj,  features = rownames(go_seurat_obj), verbose = FALSE)
   go_seurat_obj <- Seurat::RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE)
   go_seurat_obj <- Seurat::FindNeighbors(go_seurat_obj, dims = 1:50)
-  go_seurat_obj <- Seurat::FindClusters(go_seurat_obj, resolution = 1)
+  go_seurat_obj <- Seurat::FindClusters(go_seurat_obj, resolution = cluster_res)
   go_seurat_obj <- Seurat::RunUMAP(object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
                     dims = 1:50)
   Seurat::Idents(go_seurat_obj) <-  go_seurat_obj@meta.data[[cell_type_col]]

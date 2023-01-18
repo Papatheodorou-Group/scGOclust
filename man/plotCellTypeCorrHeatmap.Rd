@@ -4,12 +4,10 @@
 \alias{plotCellTypeCorrHeatmap}
 \title{plot clustered heatmap for cell type corr}
 \usage{
-plotCellTypeCorrHeatmap(corr_matrix, scale = "none", ...)
+plotCellTypeCorrHeatmap(corr_matrix, ...)
 }
 \arguments{
 \item{corr_matrix}{correlation matrix from cellTypeGOCorr or crossSpeciesCellTypeGOCorr}
-
-\item{scale}{scale the corr matrix by: 'none', 'row', 'column', default 'none'}
 
 \item{...}{params to pass to slanter::sheatmap}
 }
