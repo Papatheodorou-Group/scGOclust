@@ -318,6 +318,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...){
 #' @param analyzed_go_seurat_sp2 analyzed GO seurat object of species two
 #' @param cell_type_col_sp1 cell type column name for species 1 data
 #' @param cell_type_col_sp2 cell type column name for species 2 data
+#' @param slot_use slot to use for marker computation, default 'data' which after NormalizeData will be log1p normalized data.
 #' @param p_val_threshould p value threshold for selecting DEG (p_adjust)
 #' @return shared up and down regulated GO terms per cell type pair
 #' @examples
@@ -331,7 +332,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...){
 #'
 
 
-getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, p_val_threshould = 0.01){
+getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, slot_use = 'data', p_val_threshould = 0.01){
 
   if(!(cell_type_col_sp1 %in% colnames(analyzed_go_seurat_sp1@meta.data))){
 
@@ -349,10 +350,10 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 
 
   message(paste0("calculate cell type marker for species ", species_1, ", this will take a while"))
-  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = 'counts', test.use = 'wilcox', verbose = TRUE, )
+  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = slot_use, test.use = 'wilcox', verbose = TRUE, )
 
   message(paste0("calculate cell type marker for species ", species_2, ", this will take a while"))
-  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = 'counts', test.use = 'wilcox', verbose = TRUE)
+  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = slot_use, test.use = 'wilcox', verbose = TRUE)
 
 
   sp1_cts = levels(factor(analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]))
