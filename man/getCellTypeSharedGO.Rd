@@ -33,7 +33,7 @@ getCellTypeSharedGO(
 \item{p_val_threshould}{p value threshold for selecting DEG (p_adjust)}
 }
 \value{
-shared up and down regulated GO terms per cell type pair
+a list with sp1 raw, sp2 raw and shared, significant up and down regulated GO terms per cell type (pair)
 }
 \description{
 get shared up and down reguated GO terms for al pairs of cell types

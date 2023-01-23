@@ -320,7 +320,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...){
 #' @param cell_type_col_sp2 cell type column name for species 2 data
 #' @param slot_use slot to use for marker computation, default 'data' which after NormalizeData will be log1p normalized data.
 #' @param p_val_threshould p value threshold for selecting DEG (p_adjust)
-#' @return shared up and down regulated GO terms per cell type pair
+#' @return a list with sp1 raw, sp2 raw and shared, significant up and down regulated GO terms per cell type (pair)
 #' @examples
 #' \dontrun{
 #' getCellTypeSharedGO(species_1, species_2, seurat_sp1, seurat_sp2, col_sp1, col_sp2)
@@ -451,7 +451,9 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
     shared_all$species_1 = species_1
     shared_all$species_2 = species_2
     message('finish cel type pairs shared up and down regulated GO terms')
-    return(shared_all)
+
+    results = list(sp1_markers_raw = sp1_markers, sp2_markers_raw = sp2_markers, shared_sig_markers = shared_all)
+    return(results)
 
   }
 
