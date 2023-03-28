@@ -1,10 +1,10 @@
 Package: scGOclust
 Type: Package
-Title: Leveraging Gene Ontology to Measure Cell Type Similarity Between Single Cell RNA-Seq Datasets
+Title: Leveraging Gene Ontology to Measure Cell Type Functional Similarity with scRNA-seq Datasets
 Version: 0.1.0
 Author: Yuyao Song  <ysong@ebi.ac.uk>
 Maintainer: Yuyao Song  <ysong@ebi.ac.uk>
-Description: Comparing cell types between scRNA-seq datasets from a functional perspective requires analysis beyond gene expression. Here we use Gene Ontology terms as features to represent cell type expression profiles and calculate the profile similarity between scRNA-seq datasets. By doing so, this package enables discovery of cell types having similar or inversely regulated biological processes. Various visualozation functions are also provided for results inspection. 
+Description: Traditional methods for analyzing scRNA-seq datasets focus solely on gene expression, but `scGOclust` introduces a novel approach that goes beyond this limitation. Using Gene Ontology terms as features, the package allows for the functional profile of cell populations, and comparison within and between datasets from the same or different species. Our approach enables the discovery of previously unrecognized functional similarities and differences between cell types and has demonstrated success in identifying cell types' functional correspondence even between evolutionarily distant species.
 URL: https://github.com/YY-SONG0718/scGOclust
 BugReports: https://github.com/YY-SONG0718/scGOclust/issues
 License: MIT + file LICENSE
@@ -13,4 +13,4 @@ LazyData: true
 RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Imports: limma, Seurat, biomaRt, dplyr, magrittr, stats, tibble, tidyr, Matrix, utils, networkD3, slanter
-Suggests: devtools, knitr
+Suggests: devtools, knitr, SeuratDisk, pheatmap

@@ -1,34 +1,42 @@
 ---
-
+title: "scGOclust_mouse_fly_gut_vignette"
+author: "Yuyao Song"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-title: "R Notebook"
 vignette: >
-  %\VignetteIndexEntry{<my vignette title>} 
   %\VignetteEngine{knitr::knitr}
-  %\usepackage[utf8]{inputenc}
---- 
+  %\VignetteIndexEntry{scOntoMatch_vignette}
+  %\usepackage[UTF-8]{inputenc}
+---
 
+## Load packages
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+`scGOclust` is a package that leverages Gene Ontology to analyse the functional profile of cells with scRNA-seq data.
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
-```{r}
+```{r install}
 library(Seurat)
 library(SeuratDisk)
 library(pheatmap)
-devtools::load_all('.')
 
+if (!require("devtools")) install.packages("devtools")
+
+devtools::install_github("YY-SONG0718/scGOclust")
+
+library(scGOclust)
 ```
+
+## 2. Load input data
+
 ```{r}
-mmu_tbl = ensemblToGo(species = 'mmusculus')
-dme_tbl = ensemblToGo(species = 'dmelanogaster')
+mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
+dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 mmu_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/mca_stomach_intestine_concat_counts.h5seurat')
 dme_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.h5seurat')
 
 
 ```
+
+## 3. Build GO BP profile
 
 ```{r}
 mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_gene_name', seurat_obj = mmu_obj)
@@ -37,12 +45,15 @@ dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gen
 
 ```
 
+## 4. Calculate cell type up-regulated and down-regulated GO BP terms
+
 ```{r}
 mmu_ct_go <- getCellTypeGO(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')
 dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
 
 ```
 
+## 5. Calculate within-species cell type functional similariy
 
 ```{r, fig.width = 8,  fig.height = 8}
 mmu_corr = cellTypeGOCorr(cell_type_go = mmu_ct_go, corr_method = 'pearson')
@@ -54,11 +65,16 @@ dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
 
+## 5. Calculate cross-species cell type functional similariy
+
+
 ```{r}
 
 corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanogaster', cell_type_go_sp1 = mmu_ct_go, cell_type_go_sp2 = dme_ct_go, corr_method = 'pearson')
 
 ```
+
+
 ```{r,  fig.width = 10,  fig.height = 10}
 pheatmap(corr, filename = 'stomach_and_intestine_unscaled.pdf', width = 10, height = 10)
 
@@ -75,6 +91,7 @@ slanter::sheatmap((corr + 0.5), scale = 'column', file = 'stomach_and_intestine_
 
 ```
 
+## 6. Dimensional reduction and UMAP visualization of cells with GO profile
 
 ```{r}
 mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')
@@ -93,18 +110,9 @@ dme_go_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = 'a
 DimPlot(dme_go_analyzed, label = TRUE)
 ```
 
-
-
-
+## 7. Get co-up and co-down regulated terms between pairs of cell types
 
 ```{r}
 ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation')
 ```
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
-
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
