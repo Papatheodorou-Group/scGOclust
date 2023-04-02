@@ -135,7 +135,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 }
 
 #' standard seurat analysis on GO_seurat object
-#' @name analyzeGOSeurat
+#' @name analyzegit GOSeurat
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
 #' @param cluster_res resolution for Seurat FindClusters
