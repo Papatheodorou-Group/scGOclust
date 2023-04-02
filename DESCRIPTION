@@ -1,6 +1,6 @@
 Package: scGOclust
 Type: Package
-Title: Leveraging Gene Ontology to Measure Cell Type Functional Similarity with scRNA-seq Datasets
+Title: Leveraging Gene Ontology to Measure Cell Type Functional Similarity in Single Cell RNA-Seq Datasets
 Version: 0.1.0
 Author: Yuyao Song  <ysong@ebi.ac.uk>
 Maintainer: Yuyao Song  <ysong@ebi.ac.uk>
@@ -13,4 +13,4 @@ LazyData: true
 RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Imports: limma, Seurat, biomaRt, dplyr, magrittr, stats, tibble, tidyr, Matrix, utils, networkD3, slanter
-Suggests: devtools, knitr, SeuratDisk, pheatmap
+Suggests: devtools, knitr, SeuratDisk, pheatmap, rmarkdown
