@@ -7,7 +7,7 @@ Maintainer: Yuyao Song  <ysong@ebi.ac.uk>
 Description: Traditional methods for analyzing scRNA-seq datasets focus solely on gene expression, but `scGOclust` introduces a novel approach that goes beyond this limitation. Using Gene Ontology terms as features, the package allows for the functional profile of cell populations, and comparison within and between datasets from the same or different species. Our approach enables the discovery of previously unrecognized functional similarities and differences between cell types and has demonstrated success in identifying cell types' functional correspondence even between evolutionarily distant species.
 URL: https://github.com/YY-SONG0718/scGOclust
 BugReports: https://github.com/YY-SONG0718/scGOclust/issues
-License: MIT + file LICENSE
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
