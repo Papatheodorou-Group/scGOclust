@@ -94,7 +94,7 @@ hr { border: 1px #ddd dashed; }
 <div class="frontmatter">
 <div class="title"><h1>scGOclust_mouse_fly_gut_vignette</h1></div>
 <div class="author"><h2>Yuyao Song</h2></div>
-<div class="date"><h3>2023-03-31</h3></div>
+<div class="date"><h3>2023-04-02</h3></div>
 </div>
 
 <div class="body">
@@ -120,21 +120,32 @@ if (!require(&quot;devtools&quot;)) install.packages(&quot;devtools&quot;)
 </code></pre>
 <pre><code>## Loading required package: usethis
 </code></pre>
-<pre><code class="language-r">#devtools::install_github(&quot;YY-SONG0718/scGOclust&quot;)
-
-#library(scGOclust)
-
-devtools::load_all(&quot;../&quot;)
+<pre><code class="language-r">devtools::install_github(&quot;YY-SONG0718/scGOclust&quot;)
 </code></pre>
-<pre><code>## ℹ Loading scGOclust
+<pre><code>## Downloading GitHub repo YY-SONG0718/scGOclust@HEAD
+</code></pre>
+<pre><code>## Skipping 2 packages not available: biomaRt, limma
+</code></pre>
+<pre><code>## * checking for file ‘/private/var/folders/37/wf962dk574750g0xnnlxjwvm0000gp/T/RtmpBQSaP3/remotes81fe5ea091f/YY-SONG0718-scGOclust-7d1d634/DESCRIPTION’ ... OK
+## * preparing ‘scGOclust’:
+## * checking DESCRIPTION meta-information ... OK
+## * checking for LF line-endings in source and make files and shell scripts
+## * checking for empty or unneeded directories
+## Omitted ‘LazyData’ from DESCRIPTION
+## * building ‘scGOclust_0.1.0.tar.gz’
+</code></pre>
+<pre><code>## Installing package into '/private/var/folders/37/wf962dk574750g0xnnlxjwvm0000gp/T/RtmpBQSaP3/temp_libpath81fe4c208ce7'
+## (as 'lib' is unspecified)
+</code></pre>
+<pre><code class="language-r">library(scGOclust)
+
+#devtools::load_all(&quot;../&quot;)
 </code></pre>
 <h2>2. Load input data</h2>
 <pre><code class="language-r"># get a gene to GO BP terms mapping table
 # remove electronically inferred records
 
 mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
-</code></pre>
-<pre><code>## Ensembl site unresponsive, trying asia mirror
 </code></pre>
 <pre><code>## query biomart
 </code></pre>
@@ -156,8 +167,7 @@ mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental',
 </code></pre>
 <pre><code class="language-r">dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 </code></pre>
-<pre><code>## Ensembl site unresponsive, trying asia mirror
-## query biomart
+<pre><code>## query biomart
 </code></pre>
 <pre><code>## [1] &quot;including GO link types: &quot;
 ## $experimental
@@ -228,7 +238,7 @@ mmu_go_obj &lt;- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_
 <pre><code>## Warning in asMethod(object): sparse-&gt;dense coercion: allocating vector of size
 ## 1.8 GiB
 </code></pre>
-<pre><code>## time used: 10.28 secs
+<pre><code>## time used: 11.37 secs
 </code></pre>
 <pre><code>## returning GO Seurat object
 </code></pre>
@@ -238,7 +248,7 @@ mmu_go_obj &lt;- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_
 </code></pre>
 <pre><code>## compute GO to cell matrix, might take a few secs
 </code></pre>
-<pre><code>## time used: 3.57 secs
+<pre><code>## time used: 3.37 secs
 </code></pre>
 <pre><code>## returning GO Seurat object
 </code></pre>
@@ -310,26 +320,26 @@ mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'c
 ## To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 ## This message will be shown once per session
 </code></pre>
-<pre><code>## 18:32:23 UMAP embedding parameters a = 0.9922 b = 1.112
+<pre><code>## 18:32:45 UMAP embedding parameters a = 0.9922 b = 1.112
 </code></pre>
-<pre><code>## 18:32:23 Read 19962 rows and found 50 numeric columns
+<pre><code>## 18:32:45 Read 19962 rows and found 50 numeric columns
 </code></pre>
-<pre><code>## 18:32:23 Using Annoy for neighbor search, n_neighbors = 30
+<pre><code>## 18:32:45 Using Annoy for neighbor search, n_neighbors = 30
 </code></pre>
-<pre><code>## 18:32:23 Building Annoy index with metric = cosine, n_trees = 50
+<pre><code>## 18:32:45 Building Annoy index with metric = cosine, n_trees = 50
 </code></pre>
 <pre><code>## 0%   10   20   30   40   50   60   70   80   90   100%
 </code></pre>
 <pre><code>## [----|----|----|----|----|----|----|----|----|----|
 </code></pre>
 <pre><code>## **************************************************|
-## 18:32:26 Writing NN index file to temp file /var/folders/37/wf962dk574750g0xnnlxjwvm0000gp/T//RtmpFRMd1t/file121d961a3370d
-## 18:32:26 Searching Annoy index using 1 thread, search_k = 3000
-## 18:32:31 Annoy recall = 100%
-## 18:32:31 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-## 18:32:32 Initializing from normalized Laplacian + noise (using irlba)
-## 18:32:33 Commencing optimization for 200 epochs, with 875350 positive edges
-## 18:32:50 Optimization finished
+## 18:32:47 Writing NN index file to temp file /var/folders/37/wf962dk574750g0xnnlxjwvm0000gp/T//RtmpBQSaP3/file81fe667988ac
+## 18:32:47 Searching Annoy index using 1 thread, search_k = 3000
+## 18:32:52 Annoy recall = 100%
+## 18:32:53 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+## 18:32:54 Initializing from normalized Laplacian + noise (using irlba)
+## 18:32:55 Commencing optimization for 200 epochs, with 875350 positive edges
+## 18:33:11 Optimization finished
 </code></pre>
 <pre><code class="language-r"># UMAP plot of the analyzed cell-by-GO BP profile
 # labeled by previously specified cell annotation column in meta.data
@@ -353,26 +363,26 @@ DimPlot(mmu_go_analyzed, label = TRUE) + NoLegend()
 ## Number of communities: 24
 ## Elapsed time: 0 seconds
 </code></pre>
-<pre><code>## 18:33:04 UMAP embedding parameters a = 0.9922 b = 1.112
+<pre><code>## 18:33:25 UMAP embedding parameters a = 0.9922 b = 1.112
 </code></pre>
-<pre><code>## 18:33:04 Read 9641 rows and found 50 numeric columns
+<pre><code>## 18:33:25 Read 9641 rows and found 50 numeric columns
 </code></pre>
-<pre><code>## 18:33:04 Using Annoy for neighbor search, n_neighbors = 30
+<pre><code>## 18:33:25 Using Annoy for neighbor search, n_neighbors = 30
 </code></pre>
-<pre><code>## 18:33:04 Building Annoy index with metric = cosine, n_trees = 50
+<pre><code>## 18:33:25 Building Annoy index with metric = cosine, n_trees = 50
 </code></pre>
 <pre><code>## 0%   10   20   30   40   50   60   70   80   90   100%
 </code></pre>
 <pre><code>## [----|----|----|----|----|----|----|----|----|----|
 </code></pre>
 <pre><code>## **************************************************|
-## 18:33:05 Writing NN index file to temp file /var/folders/37/wf962dk574750g0xnnlxjwvm0000gp/T//RtmpFRMd1t/file121d97067ea80
-## 18:33:05 Searching Annoy index using 1 thread, search_k = 3000
-## 18:33:07 Annoy recall = 100%
-## 18:33:07 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
-## 18:33:08 Initializing from normalized Laplacian + noise (using irlba)
-## 18:33:09 Commencing optimization for 500 epochs, with 416402 positive edges
-## 18:33:29 Optimization finished
+## 18:33:26 Writing NN index file to temp file /var/folders/37/wf962dk574750g0xnnlxjwvm0000gp/T//RtmpBQSaP3/file81fe53a9c70
+## 18:33:26 Searching Annoy index using 1 thread, search_k = 3000
+## 18:33:28 Annoy recall = 100%
+## 18:33:29 Commencing smooth kNN distance calibration using 1 thread with target n_neighbors = 30
+## 18:33:30 Initializing from normalized Laplacian + noise (using irlba)
+## 18:33:30 Commencing optimization for 500 epochs, with 416402 positive edges
+## 18:33:50 Optimization finished
 </code></pre>
 <pre><code class="language-r">DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 </code></pre>
@@ -419,7 +429,7 @@ ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelano
 ##  [37] xfun_0.38              BiocFileCache_2.2.1    R6_2.5.1              
 ##  [40] GenomeInfoDb_1.30.1    hdf5r_1.3.5            bitops_1.0-7          
 ##  [43] spatstat.utils_3.0-2   cachem_1.0.7           assertthat_0.2.1      
-##  [46] networkD3_0.4          promises_1.2.0.1       scales_1.2.1          
+##  [46] promises_1.2.0.1       networkD3_0.4          scales_1.2.1          
 ##  [49] gtable_0.3.3           globals_0.16.2         processx_3.5.3        
 ##  [52] goftest_1.2-3          rlang_1.1.0            slanter_0.2-0         
 ##  [55] splines_4.1.2          lazyeval_0.2.2         spatstat.geom_3.1-0   

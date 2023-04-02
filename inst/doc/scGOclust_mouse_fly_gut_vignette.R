@@ -7,11 +7,11 @@ library(pheatmap)
 
 if (!require("devtools")) install.packages("devtools")
 
-#devtools::install_github("YY-SONG0718/scGOclust")
+devtools::install_github("YY-SONG0718/scGOclust")
 
-#library(scGOclust)
+library(scGOclust)
 
-devtools::load_all("../")
+#devtools::load_all("../")
 
 ## ----load_input---------------------------------------------------------------
 # get a gene to GO BP terms mapping table
