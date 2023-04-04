@@ -28,7 +28,7 @@ a table with ensembl to GO terms mapping including requested linkage type
 get requested ensembl ID to GO mapping table
 }
 \examples{
-\dontrun{
+\donttest{
 ensemblToGo(species = 'mmusculus', GO_type = 'biological_process', GO_linkage_type='experimental')
 }
 }

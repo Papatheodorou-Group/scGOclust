@@ -2,16 +2,15 @@
 # load required libraries
 
 library(Seurat)
-library(SeuratDisk)
 library(pheatmap)
 
-if (!require("devtools")) install.packages("devtools")
+## if (!require("devtools")) install.packages("devtools")
 
-devtools::install_github("YY-SONG0718/scGOclust")
+## install latest from source
+## devtools::install_github("YY-SONG0718/scGOclust")
 
 library(scGOclust)
 
-#devtools::load_all("../")
 
 ## ----load_input---------------------------------------------------------------
 # get a gene to GO BP terms mapping table
@@ -21,8 +20,8 @@ mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental',
 dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 
 # load the gene expression raw count objects
-mmu_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/mca_stomach_intestine_concat_counts.h5seurat')
-dme_obj <- LoadH5Seurat('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.h5seurat')
+mmu_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/mca_stomach_intestine_concat_counts.rds')
+dme_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.rds')
 
 
 

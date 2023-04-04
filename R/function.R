@@ -6,7 +6,7 @@
 #' @param ... additional args for useEnsembl
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ensemblToGo(species = 'mmusculus', GO_type = 'biological_process', GO_linkage_type='experimental')
 #' }
 #' @importFrom biomaRt useMart useEnsembl
@@ -36,10 +36,10 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
     getBM(mart=bm, attributes=c('ensembl_gene_id','external_gene_name','go_id', 'name_1006', 'go_linkage_type', 'namespace_1003'))
   }, warning = function(w) {
     message("ensembl biomaRt warning:")
-    print(w)
+    message(w)
   }, error = function(e) {
     message("ensembl biomaRt error:")
-    print(e)
+    message(e)
   })
 
 
@@ -60,8 +60,8 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
   }
 
   included_terms = sapply(GO_linkage_type, function(x) go_source[[x]])
-  print("including GO link types: ")
-  print(included_terms)
+  message("including GO link types: ")
+  message(included_terms)
 
   use = as.character(unname(unlist(sapply(GO_linkage_type, function(x) go_source[[x]]))))
 
@@ -135,14 +135,14 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 }
 
 #' standard seurat analysis on GO_seurat object
-#' @name analyzegit GOSeurat
+#' @name analyzeGOSeurat
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
 #' @param cluster_res resolution for Seurat FindClusters
 #' @return standard analyzed GO seurat object until UMAP
 #' @examples
 #' \dontrun{
-#' analyzeGOSeurat(go_seurat_obj)
+#' analyzeGOSeurat(go_seurat_obj, cell_type_col = 'cell_type')
 #' }
 #' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData RunPCA FindNeighbors FindClusters RunUMAP Idents
 #' @export
