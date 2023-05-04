@@ -20,7 +20,12 @@ a seurast object with GO terms as features
 create a seurat object with GO terms
 }
 \examples{
-\dontrun{
-makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id")
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
 }
 }

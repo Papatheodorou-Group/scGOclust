@@ -150,10 +150,28 @@ DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 
 ```{r shared_go, eval = FALSE}
 
-## calculation takes a few minuites due to the Wilcoxon signed rank test
+## calculation takes a few minutes due to the Wilcoxon signed rank test
 
 ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation')
+
+head(ct_shared_go)
 ```
+
+```{r shared go cell type, eval = FALSE}
+
+# query shared GO terms for specific cell type pairs
+
+getCellTypeSharedTerms(shared_go = ct_shared_go,
+                       cell_type_sp1 = 'intestine_Enteroendocrine cell', 
+                       cell_type_sp2 = 'enteroendocrine cell',
+                       return_full = FALSE)
+
+
+
+
+```
+
+
 
 ```{r sessioninfo}
 

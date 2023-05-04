@@ -20,7 +20,14 @@ standard analyzed GO seurat object until UMAP
 standard seurat analysis on GO_seurat object
 }
 \examples{
-\dontrun{
-analyzeGOSeurat(go_seurat_obj, cell_type_col = "cell_type")
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
+
+analyzeGOSeurat(go_seurat_obj = go_seurat_obj, cell_type_col = "cell_type_annotation")
 }
 }

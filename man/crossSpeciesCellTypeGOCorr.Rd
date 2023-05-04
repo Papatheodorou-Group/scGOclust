@@ -30,7 +30,25 @@ correlation between cell types
 calculate cross-species correlation between cell types represented by scaled GO
 }
 \examples{
-\dontrun{
-crossSpeciesCellTypeGOCorr(species_1, species_2, go_sp1, go_sp2)
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+data(dme_tbl)
+data(dme_subset)
+mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
+dme_go_obj = makeGOSeurat(ensembl_to_GO = dme_tbl,
+ seurat_obj = dme_subset,
+ feature_type = "external_gene_name")
+
+mmu_cell_type_go = getCellTypeGO(go_seurat_obj = mmu_go_obj, cell_type_co = "cell_type_annotation")
+dme_cell_type_go = getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_co = "annotation")
+
+crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus',
+ species_2 = 'dmelanogaster',
+ ell_type_go_sp1 = mmu_cell_type_go,
+ cell_type_go_sp2 = dme_cell_type_go)
 }
 }

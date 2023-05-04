@@ -18,7 +18,20 @@ a sheatmap heatmap
 plot clustered heatmap for cell type corr
 }
 \examples{
-\dontrun{
-plotCellTypeCorrHeatmap(corr_matrix, "column")
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+
+go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
+
+cell_type_go = getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell_type_annotation")
+
+corr_matrix = cellTypeGOCorr(cell_type_go = cell_type_go, corr_method = "pearson")
+
+plotCellTypeCorrHeatmap(corr_matrix = corr_matrix, "column")
+
 }
 }

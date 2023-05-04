@@ -18,7 +18,14 @@ a table of scaled GO representation per cell type (averaged)
 get per cell type average scaled vector of GO terms
 }
 \examples{
-\dontrun{
-getCellTypeGO(go_seurat_obj, cell_type_col)
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
+getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell_type_annotation")
+
 }
 }

@@ -39,7 +39,32 @@ a list with sp1 raw, sp2 raw and shared, significant up and down regulated GO te
 get shared up and down reguated GO terms for al pairs of cell types
 }
 \examples{
-\dontrun{
-getCellTypeSharedGO(species_1, species_2, seurat_sp1, seurat_sp2, col_sp1, col_sp2)
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+data(dme_tbl)
+data(dme_subset)
+
+mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
+dme_go_obj = makeGOSeurat(ensembl_to_GO = dme_tbl,
+ seurat_obj = dme_subset,
+ feature_type = "external_gene_name")
+
+
+mmu_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = "cell_type_annotation")
+dme_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = "annotation")
+
+getCellTypeSharedGO(species_1 = 'mmusculus',
+species_2 = 'dmelanogaster',
+analyzed_go_seurat_sp1 = ,
+analyzed_go_seurat_sp2 = ,
+cell_type_col_sp1 = 'cell_type_annotation',
+cell_type_col_sp2 = 'annotation',
+slot_use = "data",
+p_val_threshould = 0.01)
+
 }
 }

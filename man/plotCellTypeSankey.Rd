@@ -20,7 +20,17 @@ a Sankey plot showing related cell types
 plot Sankey diagram for cell type links above a certain threshould
 }
 \examples{
-\dontrun{
-plotCellTypeSankey(corr_matrix, 0.1)
+\donttest{
+library(scGOclust)
+data(mmu_tbl)
+data(mmu_subset)
+go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
+ seurat_obj = mmu_subset,
+ feature_type = "external_gene_name")
+
+cell_type_go = getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell_type_annotation")
+corr_matrix = cellTypeGOCorr(cell_type_go = cell_type_go, corr_method = "pearson")
+
+plotCellTypeSankey(corr_matrix = corr_matrix, 0.1)
 }
 }
