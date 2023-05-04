@@ -610,8 +610,8 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #'
 #' shared_go = getCellTypeSharedGO(species_1 = 'mmusculus',
 #' species_2 = 'dmelanogaster',
-#' analyzed_go_seurat_sp1 = ,
-#' analyzed_go_seurat_sp2 = ,
+#' analyzed_go_seurat_sp1 = mmu_go_obj_analyzed,
+#' analyzed_go_seurat_sp2 = dme_go_obj_analyzed,
 #' cell_type_col_sp1 = 'cell_type_annotation',
 #' cell_type_col_sp2 = 'annotation',
 #' slot_use = "data",
