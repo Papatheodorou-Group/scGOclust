@@ -284,7 +284,7 @@ cellTypeGOCorr <- function(cell_type_go, corr_method = "pearson") {
 #'
 #' crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus',
 #'  species_2 = 'dmelanogaster',
-#'  ell_type_go_sp1 = mmu_cell_type_go,
+#'  cell_type_go_sp1 = mmu_cell_type_go,
 #'  cell_type_go_sp2 = dme_cell_type_go)
 #' }
 #' @importFrom stats cor
@@ -380,13 +380,13 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...) {
 #'  feature_type = "external_gene_name")
 #'
 #'
-#' mmu_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = "cell_type_annotation")
-#' dme_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = "annotation")
+#' mmu_go_obj_analyzed = analyzeGOSeurat(mmu_go_obj, "cell_type_annotation")
+#' dme_go_obj_analyzed = analyzeGOSeurat(dme_go_obj, "annotation")
 #'
 #' getCellTypeSharedGO(species_1 = 'mmusculus',
 #' species_2 = 'dmelanogaster',
-#' analyzed_go_seurat_sp1 = ,
-#' analyzed_go_seurat_sp2 = ,
+#' analyzed_go_seurat_sp1 =  mmu_go_obj_analyzed,
+#' analyzed_go_seurat_sp2 =  dme_go_obj_analyzed,
 #' cell_type_col_sp1 = 'cell_type_annotation',
 #' cell_type_col_sp2 = 'annotation',
 #' slot_use = "data",
@@ -605,8 +605,8 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #'  feature_type = "external_gene_name")
 #'
 #'
-#' mmu_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = "cell_type_annotation")
-#' dme_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = "annotation")
+#' mmu_go_obj_analyzed = analyzeGOSeurat(mmu_go_obj, "cell_type_annotation")
+#' dme_go_obj_analyzed = analyzeGOSeurat(dme_go_obj, "annotation")
 #'
 #' shared_go = getCellTypeSharedGO(species_1 = 'mmusculus',
 #' species_2 = 'dmelanogaster',

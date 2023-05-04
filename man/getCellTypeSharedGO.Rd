@@ -54,8 +54,8 @@ dme_go_obj = makeGOSeurat(ensembl_to_GO = dme_tbl,
  feature_type = "external_gene_name")
 
 
-mmu_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = "cell_type_annotation")
-dme_go_obj_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = "annotation")
+mmu_go_obj_analyzed = analyzeGOSeurat(mmu_go_obj, "cell_type_annotation")
+dme_go_obj_analyzed = analyzeGOSeurat(dme_go_obj, "annotation")
 
 getCellTypeSharedGO(species_1 = 'mmusculus',
 species_2 = 'dmelanogaster',

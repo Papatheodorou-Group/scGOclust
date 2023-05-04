@@ -7,10 +7,12 @@ library(pheatmap)
 ## if (!require("devtools")) install.packages("devtools")
 
 ## install latest from source
-## devtools::install_github("YY-SONG0718/scGOclust")
+## for reprodubcibility we do not update dependencies
+# devtools::install_github("YY-SONG0718/scGOclust", upgrade_dependencies = FALSE)
 
 library(scGOclust)
 
+#
 
 ## ----load_input---------------------------------------------------------------
 # get a gene to GO BP terms mapping table
@@ -19,18 +21,19 @@ library(scGOclust)
 mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 
+
+## -----------------------------------------------------------------------------
 # load the gene expression raw count objects
-mmu_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/mca_stomach_intestine_concat_counts.rds')
-dme_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.rds')
-
-
+data(mmu_subset)
+data(dme_subset)
+ls()
 
 ## ----build_GO_BP_profile------------------------------------------------------
 ## construct a Seurat object with GO BP as features
 
-mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_gene_name', seurat_obj = mmu_obj)
+mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_gene_name', seurat_obj = mmu_subset)
 
-dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gene_name', seurat_obj = dme_obj)
+dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gene_name', seurat_obj = dme_subset)
 
 
 ## ----cell_type_BP-------------------------------------------------------------
@@ -98,9 +101,24 @@ DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 
 ## ----shared_go, eval = FALSE--------------------------------------------------
 #  
-#  ## calculation takes a few minuites due to the Wilcoxon signed rank test
+#  ## calculation takes a few minutes due to the Wilcoxon signed rank test
 #  
 #  ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation')
+#  
+#  head(ct_shared_go)
+
+## ----shared go cell type, eval = FALSE----------------------------------------
+#  
+#  # query shared GO terms for specific cell type pairs
+#  
+#  getCellTypeSharedTerms(shared_go = ct_shared_go,
+#                         cell_type_sp1 = 'intestine_Enteroendocrine cell',
+#                         cell_type_sp2 = 'enteroendocrine cell',
+#                         return_full = FALSE)
+#  
+#  
+#  
+#  
 
 ## ----sessioninfo--------------------------------------------------------------
 

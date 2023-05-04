@@ -48,7 +48,7 @@ dme_cell_type_go = getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_co = "ann
 
 crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus',
  species_2 = 'dmelanogaster',
- ell_type_go_sp1 = mmu_cell_type_go,
+ cell_type_go_sp1 = mmu_cell_type_go,
  cell_type_go_sp2 = dme_cell_type_go)
 }
 }

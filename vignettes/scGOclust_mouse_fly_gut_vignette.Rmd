@@ -25,10 +25,9 @@ library(pheatmap)
 ## for reprodubcibility we do not update dependencies
 # devtools::install_github("YY-SONG0718/scGOclust", upgrade_dependencies = FALSE)
 
-#library(scGOclust)
+library(scGOclust)
 
-devtools::load_all("/Users/ysong/SOFTWARE/scGOclust")
-
+#
 ```
 
 ## 2. Load input data
