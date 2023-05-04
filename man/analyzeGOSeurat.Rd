@@ -21,6 +21,6 @@ standard seurat analysis on GO_seurat object
 }
 \examples{
 \dontrun{
-analyzeGOSeurat(go_seurat_obj, cell_type_col = 'cell_type')
+analyzeGOSeurat(go_seurat_obj, cell_type_col = "cell_type")
 }
 }

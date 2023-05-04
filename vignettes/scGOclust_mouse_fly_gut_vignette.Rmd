@@ -22,9 +22,12 @@ library(pheatmap)
 ## if (!require("devtools")) install.packages("devtools")
 
 ## install latest from source
-## devtools::install_github("YY-SONG0718/scGOclust")
+## for reprodubcibility we do not update dependencies
+# devtools::install_github("YY-SONG0718/scGOclust", upgrade_dependencies = FALSE)
 
-library(scGOclust)
+#library(scGOclust)
+
+devtools::load_all("/Users/ysong/SOFTWARE/scGOclust")
 
 ```
 
@@ -37,11 +40,13 @@ library(scGOclust)
 mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 
+```
+
+```{r}
 # load the gene expression raw count objects
-mmu_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/mca_stomach_intestine_concat_counts.rds')
-dme_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cell_types.rds')
-
-
+data(mmu_subset)
+data(dme_subset)
+ls()
 ```
 
 ## 3. Build GO BP profile
@@ -49,9 +54,9 @@ dme_obj <- readRDS('/Users/ysong/SOFTWARE/scGOclust_data/fca_10x_gut_cleaned_cel
 ```{r build_GO_BP_profile}
 ## construct a Seurat object with GO BP as features
 
-mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_gene_name', seurat_obj = mmu_obj)
+mmu_go_obj <- makeGOSeurat(ensembl_to_GO = mmu_tbl, feature_type = 'external_gene_name', seurat_obj = mmu_subset)
 
-dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gene_name', seurat_obj = dme_obj)
+dme_go_obj <- makeGOSeurat(ensembl_to_GO = dme_tbl, feature_type = 'external_gene_name', seurat_obj = dme_subset)
 
 ```
 

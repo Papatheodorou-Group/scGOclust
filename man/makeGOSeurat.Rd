@@ -21,6 +21,6 @@ create a seurat object with GO terms
 }
 \examples{
 \dontrun{
-makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene_id')
+makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id")
 }
 }

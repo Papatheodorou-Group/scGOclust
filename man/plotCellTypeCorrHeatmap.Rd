@@ -19,6 +19,6 @@ plot clustered heatmap for cell type corr
 }
 \examples{
 \dontrun{
-plotCellTypeCorrHeatmap(corr_matrix, 'column')
+plotCellTypeCorrHeatmap(corr_matrix, "column")
 }
 }

@@ -7,7 +7,7 @@
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
 #' \donttest{
-#' ensemblToGo(species = 'mmusculus', GO_type = 'biological_process', GO_linkage_type='experimental')
+#' ensemblToGo(species = "mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
 #' }
 #' @importFrom biomaRt useMart useEnsembl
 #' @importFrom magrittr %>%
@@ -15,60 +15,64 @@
 #' @export
 #'
 #'
-ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator'), ...) {
+ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type = c("experimental", "phylogenetic", "computational", "author", "curator"), ...) {
 
   ## GO source type code
-  go_source = list(experimental = c("EXP", 'IDA', 'IPI', 'IMP', 'IGI', 'IEP', 'HTP', 'HDA', 'HMP', 'HGI', 'HEP'),
-                   phylogenetic = c("IBA", 'IBD', 'IKR', 'IRD'),
-                   computational = c("ISS", 'ISO', 'ISA', 'ISM', 'IGC', 'RCA'),
-                   author = c('TAS', 'NAS'),
-                   curator = c('IC', 'ND'),
-                   electronic = c("IEA"))
+  go_source <- list(
+    experimental = c("EXP", "IDA", "IPI", "IMP", "IGI", "IEP", "HTP", "HDA", "HMP", "HGI", "HEP"),
+    phylogenetic = c("IBA", "IBD", "IKR", "IRD"),
+    computational = c("ISS", "ISO", "ISA", "ISM", "IGC", "RCA"),
+    author = c("TAS", "NAS"),
+    curator = c("IC", "ND"),
+    electronic = c("IEA")
+  )
 
-  bm <- useEnsembl(biomart='ensembl', dataset=paste0(species, "_gene_ensembl"), ...)
+  bm <- useEnsembl(biomart = "ensembl", dataset = paste0(species, "_gene_ensembl"), ...)
 
   # Get ensembl gene ids and GO terms
 
   message("query biomart")
 
 
-  EG2GO <- tryCatch({
-    getBM(mart=bm, attributes=c('ensembl_gene_id','external_gene_name','go_id', 'name_1006', 'go_linkage_type', 'namespace_1003'))
-  }, warning = function(w) {
-    message("ensembl biomaRt warning:")
-    message(w)
-  }, error = function(e) {
-    message("ensembl biomaRt error:")
-    message(e)
-  })
+  EG2GO <- tryCatch(
+    {
+      getBM(mart = bm, attributes = c("ensembl_gene_id", "external_gene_name", "go_id", "name_1006", "go_linkage_type", "namespace_1003"))
+    },
+    warning = function(w) {
+      message("ensembl biomaRt warning:")
+      message(w)
+    },
+    error = function(e) {
+      message("ensembl biomaRt error:")
+      message(e)
+    }
+  )
 
 
 
   # Remove blank entries
-  EG2GO <- EG2GO[EG2GO$go_id != '',]
+  EG2GO <- EG2GO[EG2GO$go_id != "", ]
 
-  GO_terms = EG2GO %>% dplyr::filter(namespace_1003 == GO_type) %>%
-                     dplyr::filter(!(name_1006 %in% c("biological_process", 'molecular_function', 'cellular_component')))
+  GO_terms <- EG2GO %>%
+    dplyr::filter(namespace_1003 == GO_type) %>%
+    dplyr::filter(!(name_1006 %in% c("biological_process", "molecular_function", "cellular_component")))
 
-  types_in_source = list()
+  types_in_source <- list()
 
-  for(source_type in names(go_source)){
-
-    type_in = levels(factor(GO_terms$go_linkage_type))[levels(factor(GO_terms$go_linkage_type)) %in% go_source[[source_type]]]
-    types_in_source[[source_type]] = type_in
-
+  for (source_type in names(go_source)) {
+    type_in <- levels(factor(GO_terms$go_linkage_type))[levels(factor(GO_terms$go_linkage_type)) %in% go_source[[source_type]]]
+    types_in_source[[source_type]] <- type_in
   }
 
-  included_terms = sapply(GO_linkage_type, function(x) go_source[[x]])
+  included_terms <- sapply(GO_linkage_type, function(x) go_source[[x]])
   message("including GO link types: ")
   message(included_terms)
 
-  use = as.character(unname(unlist(sapply(GO_linkage_type, function(x) go_source[[x]]))))
+  use <- as.character(unname(unlist(sapply(GO_linkage_type, function(x) go_source[[x]]))))
 
-  GO_terms = GO_terms %>% dplyr::filter(go_linkage_type %in% use)
+  GO_terms <- GO_terms %>% dplyr::filter(go_linkage_type %in% use)
 
   return(GO_terms)
-
 }
 
 
@@ -82,7 +86,7 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
 #' @return a seurast object with GO terms as features
 #' @examples
 #' \dontrun{
-#' makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene_id')
+#' makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id")
 #' }
 #' @importFrom biomaRt useMart useDataset getBM
 #' @importFrom Matrix Matrix
@@ -95,43 +99,42 @@ ensemblToGo <- function(species, GO_type = 'biological_process', GO_linkage_type
 #'
 #'
 
-makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene_id'){
-
+makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id") {
   message("collect data")
-  counts = as.matrix(seurat_obj@assays$RNA@counts)
+  counts <- as.matrix(seurat_obj@assays$RNA@counts)
 
   ## pivot GO to feature type table to matrix
-  go_matrix = ensembl_to_GO %>% dplyr::mutate(placehold = 1) %>%
+  go_matrix <- ensembl_to_GO %>%
+    dplyr::mutate(placehold = 1) %>%
     tidyr::pivot_wider(id_cols = eval(feature_type), names_from = name_1006, values_from = placehold, values_fill = 0, values_fn = dplyr::first)
 
-  shared = intersect(go_matrix[[feature_type]], rownames(counts))
+  shared <- intersect(go_matrix[[feature_type]], rownames(counts))
 
-  go_matrix <- go_matrix %>% dplyr::filter(get(feature_type) %in% shared) %>% dplyr::arrange(get(feature_type))
-  go_matrix = go_matrix %>% tibble::column_to_rownames(eval(feature_type))
+  go_matrix <- go_matrix %>%
+    dplyr::filter(get(feature_type) %in% shared) %>%
+    dplyr::arrange(get(feature_type))
+  go_matrix <- go_matrix %>% tibble::column_to_rownames(eval(feature_type))
 
-  counts = t(counts)
-  counts = counts %>% as.data.frame()
-  counts = counts  %>% dplyr::select(eval(shared))
-  counts = counts[, match(rownames(go_matrix), colnames(counts))]
+  counts <- t(counts)
+  counts <- counts %>% as.data.frame()
+  counts <- counts %>% dplyr::select(eval(shared))
+  counts <- counts[, match(rownames(go_matrix), colnames(counts))]
 
 
-  if(!(all(colnames(counts) == rownames(go_matrix)))) {
-
+  if (!(all(colnames(counts) == rownames(go_matrix)))) {
     stop("error during calculation, please check input format")
   }
 
   message("compute GO to cell matrix, might take a few secs")
-  start_time = Sys.time()
-  go_mtx = Matrix::Matrix(as.matrix(counts), sparse = TRUE) %*% Matrix::Matrix(as.matrix(go_matrix), sparse = TRUE)
+  start_time <- Sys.time()
+  go_mtx <- Matrix::Matrix(as.matrix(counts), sparse = TRUE) %*% Matrix::Matrix(as.matrix(go_matrix), sparse = TRUE)
   go_obj <- Seurat::CreateSeuratObject(counts = t(as.matrix(go_mtx)), meta.data = seurat_obj@meta.data)
-  end_time = Sys.time()
+  end_time <- Sys.time()
 
-  message(paste0('time used: ', round(end_time - start_time, 2), " secs"))
+  message(paste0("time used: ", round(end_time - start_time, 2), " secs"))
 
   message("returning GO Seurat object")
   return(go_obj)
-
-
 }
 
 #' standard seurat analysis on GO_seurat object
@@ -142,31 +145,30 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = 'ensembl_gene
 #' @return standard analyzed GO seurat object until UMAP
 #' @examples
 #' \dontrun{
-#' analyzeGOSeurat(go_seurat_obj, cell_type_col = 'cell_type')
+#' analyzeGOSeurat(go_seurat_obj, cell_type_col = "cell_type")
 #' }
 #' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData RunPCA FindNeighbors FindClusters RunUMAP Idents
 #' @export
 #'
 
 
-analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, cluster_res = 1){
-
-  if(!(cell_type_col %in% colnames(go_seurat_obj@meta.data))){
-
+analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, cluster_res = 1) {
+  if (!(cell_type_col %in% colnames(go_seurat_obj@meta.data))) {
     stop("cell_type_col not in annotation, please check input")
   }
 
   go_seurat_obj <- Seurat::NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
   go_seurat_obj <- Seurat::FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
-  go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj,  features = rownames(go_seurat_obj), verbose = FALSE)
+  go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = FALSE)
   go_seurat_obj <- Seurat::RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE)
   go_seurat_obj <- Seurat::FindNeighbors(go_seurat_obj, dims = 1:50)
   go_seurat_obj <- Seurat::FindClusters(go_seurat_obj, resolution = cluster_res)
-  go_seurat_obj <- Seurat::RunUMAP(object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
-                    dims = 1:50)
-  Seurat::Idents(go_seurat_obj) <-  go_seurat_obj@meta.data[[cell_type_col]]
+  go_seurat_obj <- Seurat::RunUMAP(
+    object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
+    dims = 1:50
+  )
+  Seurat::Idents(go_seurat_obj) <- go_seurat_obj@meta.data[[cell_type_col]]
   return(go_seurat_obj)
-
 }
 
 #' get per cell type average scaled vector of GO terms
@@ -182,10 +184,8 @@ analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, cluster_res = 1){
 #' @export
 #'
 
-getCellTypeGO <- function(go_seurat_obj, cell_type_col){
-
-  if(!(cell_type_col %in% colnames(go_seurat_obj@meta.data))){
-
+getCellTypeGO <- function(go_seurat_obj, cell_type_col) {
+  if (!(cell_type_col %in% colnames(go_seurat_obj@meta.data))) {
     stop("cell_type_col not in metadata, please check input")
   }
 
@@ -193,9 +193,8 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col){
 
   go_seurat_obj <- ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = TRUE, scale.max = 10000) ## set scale.max to near-unlimited, also use all features
 
-  tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, slot = 'scale.data')
-  return(as.data.frame(tbl[['RNA']]))
-
+  tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, slot = "scale.data")
+  return(as.data.frame(tbl[["RNA"]]))
 }
 
 
@@ -206,33 +205,27 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col){
 #' @return a dataframe with correlation between cell types
 #' @examples
 #' \dontrun{
-#' cellTypeGOCorr(cell_type_go, corr_method = 'pearson')
+#' cellTypeGOCorr(cell_type_go, corr_method = "pearson")
 #' }
 #' @importFrom stats cor
 #' @export
 #'
 
 
-cellTypeGOCorr <- function(cell_type_go, corr_method = 'pearson'){
+cellTypeGOCorr <- function(cell_type_go, corr_method = "pearson") {
+  cell_type_go <- as.data.frame(cell_type_go)
+  all_cell_types <- colnames(cell_type_go)
+  corr_matrix <- data.frame()
 
-  cell_type_go = as.data.frame(cell_type_go)
-  all_cell_types = colnames(cell_type_go)
-  corr_matrix = data.frame()
+  for (cell_type_1 in all_cell_types) {
+    for (cell_type_2 in all_cell_types) {
+      corr_val <- stats::cor(cell_type_go[, cell_type_1], cell_type_go[, cell_type_2], method = corr_method)
 
-  for(cell_type_1 in all_cell_types){
-
-    for(cell_type_2 in all_cell_types){
-
-      corr_val = stats::cor(cell_type_go[, cell_type_1], cell_type_go[, cell_type_2], method = corr_method)
-
-      corr_matrix[cell_type_1, cell_type_2] = corr_val
-
+      corr_matrix[cell_type_1, cell_type_2] <- corr_val
     }
-
   }
 
   return(corr_matrix)
-
 }
 
 #' calculate cross-species correlation between cell types represented by scaled GO
@@ -251,41 +244,33 @@ cellTypeGOCorr <- function(cell_type_go, corr_method = 'pearson'){
 #' @export
 #'
 
-crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, cell_type_go_sp2, corr_method='pearson'){
+crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, cell_type_go_sp2, corr_method = "pearson") {
+  cell_type_go_sp1 <- as.data.frame(cell_type_go_sp1)
+  cell_type_go_sp2 <- as.data.frame(cell_type_go_sp2)
 
-
-  cell_type_go_sp1 = as.data.frame(cell_type_go_sp1)
-  cell_type_go_sp2 = as.data.frame(cell_type_go_sp2)
-
-  all_cell_types_sp1 = colnames(cell_type_go_sp1)
-  all_cell_types_sp2 = colnames(cell_type_go_sp2)
+  all_cell_types_sp1 <- colnames(cell_type_go_sp1)
+  all_cell_types_sp2 <- colnames(cell_type_go_sp2)
 
   ## take intersection of GO terms
-  intersection = intersect(rownames(cell_type_go_sp1), rownames(cell_type_go_sp2))
-  cell_type_go_sp1 = cell_type_go_sp1[intersection, ]
-  cell_type_go_sp2 = cell_type_go_sp2[intersection, ]
+  intersection <- intersect(rownames(cell_type_go_sp1), rownames(cell_type_go_sp2))
+  cell_type_go_sp1 <- cell_type_go_sp1[intersection, ]
+  cell_type_go_sp2 <- cell_type_go_sp2[intersection, ]
 
-  if(!(all(rownames(cell_type_go_sp1) == rownames(cell_type_go_sp2)))) {
-
+  if (!(all(rownames(cell_type_go_sp1) == rownames(cell_type_go_sp2)))) {
     stop("cross-species matching of GO terms failed, please check input")
   }
 
-  corr_matrix = data.frame()
+  corr_matrix <- data.frame()
 
-  for(cell_type_1 in all_cell_types_sp1){
+  for (cell_type_1 in all_cell_types_sp1) {
+    for (cell_type_2 in all_cell_types_sp2) {
+      corr_val <- stats::cor(cell_type_go_sp1[, cell_type_1], cell_type_go_sp2[, cell_type_2], method = corr_method)
 
-    for(cell_type_2 in all_cell_types_sp2){
-
-      corr_val = stats::cor(cell_type_go_sp1[, cell_type_1], cell_type_go_sp2[, cell_type_2], method = corr_method)
-
-      corr_matrix[paste0(species_1, "_", cell_type_1), paste0(species_2, "_", cell_type_2)] = corr_val
-
+      corr_matrix[paste0(species_1, "_", cell_type_1), paste0(species_2, "_", cell_type_2)] <- corr_val
     }
-
   }
 
   return(corr_matrix)
-
 }
 
 #' plot clustered heatmap for cell type corr
@@ -294,18 +279,16 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #' @param ... params to pass to slanter::sheatmap
 #' @examples
 #' \dontrun{
-#' plotCellTypeCorrHeatmap(corr_matrix, 'column')
+#' plotCellTypeCorrHeatmap(corr_matrix, "column")
 #' }
 #' @return a sheatmap heatmap
 #' @importFrom slanter sheatmap
 #' @export
 #'
 
-plotCellTypeCorrHeatmap <- function(corr_matrix, ...){
-
-  heatmap = slanter::sheatmap(corr_matrix + 0.5,  ...)
+plotCellTypeCorrHeatmap <- function(corr_matrix, ...) {
+  heatmap <- slanter::sheatmap(corr_matrix + 0.5, ...)
   return(heatmap)
-
 }
 
 
@@ -332,60 +315,59 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...){
 #'
 
 
-getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, slot_use = 'data', p_val_threshould = 0.01){
-
-  if(!(cell_type_col_sp1 %in% colnames(analyzed_go_seurat_sp1@meta.data))){
-
+getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, slot_use = "data", p_val_threshould = 0.01) {
+  if (!(cell_type_col_sp1 %in% colnames(analyzed_go_seurat_sp1@meta.data))) {
     stop("cell_type_col_sp1 not in annotation, please check input")
   }
 
-  if(!(cell_type_col_sp2 %in% colnames(analyzed_go_seurat_sp2@meta.data))){
-
+  if (!(cell_type_col_sp2 %in% colnames(analyzed_go_seurat_sp2@meta.data))) {
     stop("cell_type_col_sp2 not in annotation, please check input")
   }
 
   ## set idents for marker calling
-  Seurat::Idents(analyzed_go_seurat_sp1) <-  analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]
-  Seurat::Idents(analyzed_go_seurat_sp2) <-  analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]
+  Seurat::Idents(analyzed_go_seurat_sp1) <- analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]
+  Seurat::Idents(analyzed_go_seurat_sp2) <- analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]
 
 
   message(paste0("calculate cell type marker for species ", species_1, ", this will take a while"))
-  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = slot_use, test.use = 'wilcox', verbose = TRUE, )
+  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = slot_use, test.use = "wilcox", verbose = TRUE, )
 
   message(paste0("calculate cell type marker for species ", species_2, ", this will take a while"))
-  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = slot_use, test.use = 'wilcox', verbose = TRUE)
+  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = slot_use, test.use = "wilcox", verbose = TRUE)
 
 
-  sp1_cts = levels(factor(analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]))
-  sp2_cts = levels(factor(analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]))
+  sp1_cts <- levels(factor(analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]))
+  sp2_cts <- levels(factor(analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]))
 
   message("collect shared up regulated terms")
 
-  shared_all = data.frame()
-  for (ct_sp1 in sp1_cts){
-
-    for(ct_sp2 in sp2_cts){
-
-      sp1_sig_up = sp1_markers %>% filter(cluster == ct_sp1) %>%
+  shared_all <- data.frame()
+  for (ct_sp1 in sp1_cts) {
+    for (ct_sp2 in sp2_cts) {
+      sp1_sig_up <- sp1_markers %>%
+        filter(cluster == ct_sp1) %>%
         filter(avg_log2FC > 0) %>%
         filter(p_val_adj < p_val_threshould) %>%
-        mutate(marker_type = 'sig_up')
+        mutate(marker_type = "sig_up")
 
-      sp1_sig_up_terms = sp1_sig_up$gene
+      sp1_sig_up_terms <- sp1_sig_up$gene
 
-      sp2_sig_up = sp2_markers %>% filter(cluster == ct_sp2) %>%
+      sp2_sig_up <- sp2_markers %>%
+        filter(cluster == ct_sp2) %>%
         filter(avg_log2FC > 0) %>%
         filter(p_val_adj < p_val_threshould) %>%
-        mutate(marker_type = 'sig_up')
+        mutate(marker_type = "sig_up")
 
-      sp2_sig_up_terms = sp2_sig_up$gene
+      sp2_sig_up_terms <- sp2_sig_up$gene
 
-      intersect = intersect(sp1_sig_up_terms, sp2_sig_up_terms)
+      intersect <- intersect(sp1_sig_up_terms, sp2_sig_up_terms)
 
-      sp1_sig_up <- sp1_sig_up %>% filter(gene %in% intersect) %>%
+      sp1_sig_up <- sp1_sig_up %>%
+        filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp1_sig_up_terms))
 
-      sp2_sig_up <- sp2_sig_up %>% filter(gene %in% intersect) %>%
+      sp2_sig_up <- sp2_sig_up %>%
+        filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp2_sig_up_terms))
 
       nr <- max(nrow(sp1_sig_up), nrow(sp2_sig_up))
@@ -396,40 +378,40 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
       sp2_sig_up_use <- sp2_sig_up[1:nr, ]
       colnames(sp2_sig_up_use) <- paste0("sp2_", colnames(sp2_sig_up_use))
 
-      shared = cbind(sp1_sig_up_use, sp2_sig_up_use)
+      shared <- cbind(sp1_sig_up_use, sp2_sig_up_use)
 
-      shared_all = rbind(shared_all, shared)
-
+      shared_all <- rbind(shared_all, shared)
     }
-
   }
 
 
   message("collect shared down regulated terms")
-  for (ct_sp1 in sp1_cts){
-
-    for(ct_sp2 in sp2_cts){
-
-      sp1_sig_down = sp1_markers %>% filter(cluster == ct_sp1) %>%
+  for (ct_sp1 in sp1_cts) {
+    for (ct_sp2 in sp2_cts) {
+      sp1_sig_down <- sp1_markers %>%
+        filter(cluster == ct_sp1) %>%
         filter(avg_log2FC < 0) %>%
         filter(p_val_adj < p_val_threshould) %>%
-        mutate(marker_type = 'sig_down')
+        mutate(marker_type = "sig_down")
 
-      sp1_sig_down_terms = sp1_sig_down$gene
+      sp1_sig_down_terms <- sp1_sig_down$gene
 
-      sp2_sig_down = sp2_markers %>% filter(cluster == ct_sp2) %>%
+      sp2_sig_down <- sp2_markers %>%
+        filter(cluster == ct_sp2) %>%
         filter(avg_log2FC < 0) %>%
         filter(p_val_adj < p_val_threshould) %>%
-        mutate(marker_type = 'sig_down')
+        mutate(marker_type = "sig_down")
 
-      sp2_sig_down_terms = sp2_sig_down$gene
+      sp2_sig_down_terms <- sp2_sig_down$gene
 
-      intersect = intersect(sp1_sig_down_terms, sp2_sig_down_terms)
+      intersect <- intersect(sp1_sig_down_terms, sp2_sig_down_terms)
 
-      sp1_sig_down <- sp1_sig_down %>% filter(gene %in% intersect) %>%
+      sp1_sig_down <- sp1_sig_down %>%
+        filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp1_sig_down_terms))
 
-      sp2_sig_down <- sp2_sig_down %>% filter(gene %in% intersect) %>%
+      sp2_sig_down <- sp2_sig_down %>%
+        filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp2_sig_down_terms))
 
       nr <- max(nrow(sp1_sig_down), nrow(sp2_sig_down))
@@ -440,23 +422,20 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
       sp2_sig_down_use <- sp2_sig_down[1:nr, ]
       colnames(sp2_sig_down_use) <- paste0("sp2_", colnames(sp2_sig_down_use))
 
-      shared = cbind(sp1_sig_down_use, sp2_sig_down_use)
+      shared <- cbind(sp1_sig_down_use, sp2_sig_down_use)
 
 
-      shared_all = rbind(shared_all, shared)
-
+      shared_all <- rbind(shared_all, shared)
     }
 
 
-    shared_all$species_1 = species_1
-    shared_all$species_2 = species_2
-    message('finish cel type pairs shared up and down regulated GO terms')
+    shared_all$species_1 <- species_1
+    shared_all$species_2 <- species_2
+    message("finish cel type pairs shared up and down regulated GO terms")
 
-    results = list(sp1_markers_raw = sp1_markers, sp2_markers_raw = sp2_markers, shared_sig_markers = shared_all)
+    results <- list(sp1_markers_raw = sp1_markers, sp2_markers_raw = sp2_markers, shared_sig_markers = shared_all)
     return(results)
-
   }
-
 }
 
 #' plot Sankey diagram for cell type links above a certain threshould
@@ -478,34 +457,33 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 #'
 
 
-plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1, ...){
-
+plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
   links <- corr_matrix %>%
-  as.data.frame() %>%
-  tibble::rownames_to_column(var="source") %>%
-  tidyr::gather(key="target", value="value", -1) %>%
-  dplyr::filter(value >= corr_threshould)
+    as.data.frame() %>%
+    tibble::rownames_to_column(var = "source") %>%
+    tidyr::gather(key = "target", value = "value", -1) %>%
+    dplyr::filter(value >= corr_threshould)
 
-  if(nrow(links) == 0) {
+  if (nrow(links) == 0) {
     stop("no cell type pairs pass corr_threshould, please lower threshould")
   }
 
   nodes <- data.frame(
-  name=c(as.character(links$source), as.character(links$target)) %>%
-  unique()
+    name = c(as.character(links$source), as.character(links$target)) %>%
+      unique()
   )
 
-  links$IDsource <- match(links$source, nodes$name)-1
-  links$IDtarget <- match(links$target, nodes$name)-1
+  links$IDsource <- match(links$source, nodes$name) - 1
+  links$IDtarget <- match(links$target, nodes$name) - 1
 
-  p <- networkD3::sankeyNetwork(Links = links, Nodes = nodes,
-  Source = "IDsource", Target = "IDtarget",
-  Value = "value", NodeID = "name",
-  sinksRight=FALSE, ...)
+  p <- networkD3::sankeyNetwork(
+    Links = links, Nodes = nodes,
+    Source = "IDsource", Target = "IDtarget",
+    Value = "value", NodeID = "name",
+    sinksRight = FALSE, ...
+  )
 
   return(p)
-
-
 }
 
 
@@ -526,46 +504,39 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould=0.1, ...){
 #'
 
 
-getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full=FALSE){
+getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full = FALSE) {
 
   ## if the shared_go is a dataframe not precomputed from read_csv, but freshly computed
-  if(!('cluster...7' %in% colnames(shared_go))){
-
-    colnames(shared_go) = paste0(colnames(shared_go), "...", c(2:21))
-
+  if (!("cluster...7" %in% colnames(shared_go))) {
+    colnames(shared_go) <- paste0(colnames(shared_go), "...", c(2:21))
   }
 
-  if(!(cell_type_sp1 %in% levels(factor(shared_go[['cluster...7']])))){
-
+  if (!(cell_type_sp1 %in% levels(factor(shared_go[["cluster...7"]])))) {
     stop("cell type sp1 not in data, please check input")
   }
 
-  if (!(cell_type_sp2 %in% levels(factor(shared_go[['cluster...16']])))){
-
+  if (!(cell_type_sp2 %in% levels(factor(shared_go[["cluster...16"]])))) {
     stop("cell type sp2 not in data, please check input")
   }
 
-  if(!(return_full)){
-
-    shared_go = shared_go %>%
-      dplyr::select(`cluster...7`, `gene...8`, `marker_type...9`,
-                                `cluster...16`, `gene...17`, `marker_type...18`)
+  if (!(return_full)) {
+    shared_go <- shared_go %>%
+      dplyr::select(
+        `cluster...7`, `gene...8`, `marker_type...9`,
+        `cluster...16`, `gene...17`, `marker_type...18`
+      )
   }
-  tbl = shared_go %>%
+  tbl <- shared_go %>%
     dplyr::filter(`cluster...7` == cell_type_sp1) %>%
     dplyr::filter(`cluster...16` == cell_type_sp2)
 
 
-  tbl_1 = tbl[, 1:9] %>% arrange(`gene...8`)
-  tbl_2 = tbl[, 10:20] %>% arrange(`gene...17`)
+  tbl_1 <- tbl[, 1:9] %>% arrange(`gene...8`)
+  tbl_2 <- tbl[, 10:20] %>% arrange(`gene...17`)
 
-  tbl_final = cbind(tbl_1, tbl_2)
+  tbl_final <- cbind(tbl_1, tbl_2)
 
 
 
   return(tbl_final)
-
 }
-
-
-

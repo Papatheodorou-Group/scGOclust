@@ -29,6 +29,6 @@ get requested ensembl ID to GO mapping table
 }
 \examples{
 \donttest{
-ensemblToGo(species = 'mmusculus', GO_type = 'biological_process', GO_linkage_type='experimental')
+ensemblToGo(species = "mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
 }
 }

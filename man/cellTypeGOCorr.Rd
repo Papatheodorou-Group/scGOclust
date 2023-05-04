@@ -19,6 +19,6 @@ calculate correlation between cell types represented by scaled GO, per-species
 }
 \examples{
 \dontrun{
-cellTypeGOCorr(cell_type_go, corr_method = 'pearson')
+cellTypeGOCorr(cell_type_go, corr_method = "pearson")
 }
 }
