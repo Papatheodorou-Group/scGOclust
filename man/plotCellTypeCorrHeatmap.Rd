@@ -31,7 +31,7 @@ cell_type_go = getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell
 
 corr_matrix = cellTypeGOCorr(cell_type_go = cell_type_go, corr_method = "pearson")
 
-plotCellTypeCorrHeatmap(corr_matrix = corr_matrix, "column")
+plotCellTypeCorrHeatmap(corr_matrix = corr_matrix, scale = "column")
 
 }
 }

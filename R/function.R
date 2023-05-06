@@ -338,7 +338,7 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #'
 #' corr_matrix = cellTypeGOCorr(cell_type_go = cell_type_go, corr_method = "pearson")
 #'
-#' plotCellTypeCorrHeatmap(corr_matrix = corr_matrix, "column")
+#' plotCellTypeCorrHeatmap(corr_matrix = corr_matrix, scale = "column")
 #'
 #' }
 #' @return a sheatmap heatmap
@@ -353,7 +353,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...) {
 
 
 
-#' get shared up and down reguated GO terms for al pairs of cell types
+#' get shared up and down regulated GO terms for al pairs of cell types
 #' @name getCellTypeSharedGO
 #' @param species_1 name of species one
 #' @param species_2 name of species two
