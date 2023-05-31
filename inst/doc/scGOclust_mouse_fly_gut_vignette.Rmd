@@ -4,7 +4,7 @@ author: "Yuyao Song"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{scGOclust_vignette}
   %\usepackage[UTF-8]{inputenc}
 ---
@@ -13,11 +13,12 @@ vignette: >
 
 `scGOclust` is a package that leverages Gene Ontology to analyse the functional profile of cells with scRNA-seq data.
 
-```{r install}
+```{r install and load packages}
 # load required libraries
 
 library(Seurat)
 library(pheatmap)
+library(httr)
 
 ## if (!require("devtools")) install.packages("devtools")
 
@@ -35,6 +36,9 @@ library(scGOclust)
 ```{r load_input}
 # get a gene to GO BP terms mapping table
 # remove electronically inferred records
+
+# sometimes ensembl complains about ssh certificate has expired, this is a known issue, run this code
+httr::set_config(httr::config(ssl_verifypeer = FALSE)) 
 
 mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
@@ -170,7 +174,10 @@ getCellTypeSharedTerms(shared_go = ct_shared_go,
 
 ```
 
+```{r}
 
+plotCellTypeSankey(corr_matrix = corr, corr_threshould = 0.05)
+```
 
 ```{r sessioninfo}
 

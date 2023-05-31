@@ -22,7 +22,9 @@ create a seurat object with GO terms
 \examples{
 \donttest{
 library(scGOclust)
-data(mmu_tbl)
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+mmu_tbl = ensemblToGo(species = 'mmusculus')
 data(mmu_subset)
 makeGOSeurat(ensembl_to_GO = mmu_tbl,
  seurat_obj = mmu_subset,

@@ -8,7 +8,9 @@
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' ensemblToGo(species = "mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' ensemblToGo("mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
 #' }
 #' @importFrom biomaRt useMart useEnsembl
 #' @importFrom magrittr %>%
@@ -88,7 +90,9 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
 #' makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
@@ -148,11 +152,17 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
 #' @param cluster_res resolution for Seurat FindClusters
+#' @param scale.factor param for Seurat NormalizeData
+#' @param nfeatures param for Seurat FindVariableFeatures
+#' @param min.dist param for Seurat RunUMAP
+#' @param ... additional params for all Seurat functions involved in this function
 #' @return standard analyzed GO seurat object until UMAP
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
 #' go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
@@ -165,21 +175,18 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
 #'
 
 
-analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, cluster_res = 1) {
+analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, scale.factor = 10000, nfeatures = 2000, cluster_res = 1, min.dist=0.3, ...) {
   if (!(cell_type_col %in% colnames(go_seurat_obj@meta.data))) {
     stop("cell_type_col not in annotation, please check input")
   }
 
-  go_seurat_obj <- Seurat::NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
-  go_seurat_obj <- Seurat::FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = 2000)
-  go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = FALSE)
-  go_seurat_obj <- Seurat::RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE)
-  go_seurat_obj <- Seurat::FindNeighbors(go_seurat_obj, dims = 1:50)
-  go_seurat_obj <- Seurat::FindClusters(go_seurat_obj, resolution = cluster_res)
-  go_seurat_obj <- Seurat::RunUMAP(
-    object = go_seurat_obj, reduction = "pca", min.dist = 0.3,
-    dims = 1:50
-  )
+  go_seurat_obj <- Seurat::NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = scale.factor, ...)
+  go_seurat_obj <- Seurat::FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = nfeatures, ...)
+  go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = FALSE, ...)
+  go_seurat_obj <- Seurat::RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE, ...)
+  go_seurat_obj <- Seurat::FindNeighbors(go_seurat_obj, dims = 1:50, ...)
+  go_seurat_obj <- Seurat::FindClusters(go_seurat_obj, resolution = cluster_res, ...)
+  go_seurat_obj <- Seurat::RunUMAP(object = go_seurat_obj, reduction = "pca", min.dist = min.dist, dims = 1:50, ...)
   Seurat::Idents(go_seurat_obj) <- go_seurat_obj@meta.data[[cell_type_col]]
   return(go_seurat_obj)
 }
@@ -192,13 +199,14 @@ analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, cluster_res = 1) {
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
 #' go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
 #'  feature_type = "external_gene_name")
 #' getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell_type_annotation")
-#'
 #' }
 #' @importFrom Seurat NormalizeData FindVariableFeatures ScaleData AverageExpression
 #' @export
@@ -226,7 +234,9 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col) {
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
 #' go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
@@ -236,6 +246,7 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col) {
 #'
 #' cellTypeGOCorr(cell_type_go = cell_type_go, corr_method = "pearson")
 #' }
+#'
 #' @importFrom stats cor
 #' @export
 #'
@@ -268,9 +279,11 @@ cellTypeGOCorr <- function(cell_type_go, corr_method = "pearson") {
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
-#' data(dme_tbl)
+#' dme_tbl = ensemblToGo(species = 'dmelanogaster')
 #' data(dme_subset)
 #' mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
@@ -327,7 +340,9 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
 #'
 #' go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
@@ -367,9 +382,11 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...) {
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
-#' data(dme_tbl)
+#' dme_tbl = ensemblToGo(species = 'dmelanogaster')
 #' data(dme_subset)
 #'
 #' mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
@@ -391,7 +408,6 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, ...) {
 #' cell_type_col_sp2 = 'annotation',
 #' slot_use = "data",
 #' p_val_threshould = 0.01)
-#'
 #' }
 #' @importFrom Seurat FindAllMarkers Idents
 #' @import limma
@@ -532,7 +548,9 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
 #' go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
@@ -592,9 +610,11 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #' @examples
 #' \donttest{
 #' library(scGOclust)
-#' data(mmu_tbl)
+#' library(httr)
+#' httr::set_config(httr::config(ssl_verifypeer = FALSE))
+#' mmu_tbl = ensemblToGo(species = 'mmusculus')
 #' data(mmu_subset)
-#' data(dme_tbl)
+#' dme_tbl = ensemblToGo(species = 'dmelanogaster')
 #' data(dme_subset)
 #'
 #' mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,

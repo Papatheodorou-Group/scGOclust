@@ -41,9 +41,11 @@ get shared up and down regulated GO terms for al pairs of cell types
 \examples{
 \donttest{
 library(scGOclust)
-data(mmu_tbl)
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+mmu_tbl = ensemblToGo(species = 'mmusculus')
 data(mmu_subset)
-data(dme_tbl)
+dme_tbl = ensemblToGo(species = 'dmelanogaster')
 data(dme_subset)
 
 mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
@@ -65,6 +67,5 @@ cell_type_col_sp1 = 'cell_type_annotation',
 cell_type_col_sp2 = 'annotation',
 slot_use = "data",
 p_val_threshould = 0.01)
-
 }
 }

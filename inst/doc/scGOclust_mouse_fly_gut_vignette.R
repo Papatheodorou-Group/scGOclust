@@ -1,8 +1,9 @@
-## ----install------------------------------------------------------------------
+## ----install and load packages------------------------------------------------
 # load required libraries
 
 library(Seurat)
 library(pheatmap)
+library(httr)
 
 ## if (!require("devtools")) install.packages("devtools")
 
@@ -17,6 +18,9 @@ library(scGOclust)
 ## ----load_input---------------------------------------------------------------
 # get a gene to GO BP terms mapping table
 # remove electronically inferred records
+
+# sometimes ensembl complains about ssh certificate has expired, this is a known issue, run this code
+httr::set_config(httr::config(ssl_verifypeer = FALSE)) 
 
 mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
@@ -119,6 +123,10 @@ DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 #  
 #  
 #  
+
+## -----------------------------------------------------------------------------
+
+plotCellTypeSankey(corr_matrix = corr, corr_threshould = 0.05)
 
 ## ----sessioninfo--------------------------------------------------------------
 

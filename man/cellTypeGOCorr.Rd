@@ -20,7 +20,9 @@ calculate correlation between cell types represented by scaled GO, per-species
 \examples{
 \donttest{
 library(scGOclust)
-data(mmu_tbl)
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+mmu_tbl = ensemblToGo(species = 'mmusculus')
 data(mmu_subset)
 go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
  seurat_obj = mmu_subset,
@@ -30,4 +32,5 @@ cell_type_go = getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell
 
 cellTypeGOCorr(cell_type_go = cell_type_go, corr_method = "pearson")
 }
+
 }

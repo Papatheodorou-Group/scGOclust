@@ -20,12 +20,13 @@ get per cell type average scaled vector of GO terms
 \examples{
 \donttest{
 library(scGOclust)
-data(mmu_tbl)
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+mmu_tbl = ensemblToGo(species = 'mmusculus')
 data(mmu_subset)
 go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
  seurat_obj = mmu_subset,
  feature_type = "external_gene_name")
 getCellTypeGO(go_seurat_obj = go_seurat_obj, cell_type_co = "cell_type_annotation")
-
 }
 }

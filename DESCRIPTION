@@ -13,6 +13,6 @@ LazyDataCompression: bzip2
 RoxygenNote: 7.2.0
 VignetteBuilder: knitr
 Imports: limma, Seurat, biomaRt, dplyr, magrittr, stats, tibble, tidyr, Matrix, utils, networkD3, slanter
-Suggests: devtools, knitr, pheatmap, rmarkdown
-Depends: 
+Suggests: devtools, knitr, pheatmap, rmarkdown, httr
+Depends:
     R (>= 2.10)

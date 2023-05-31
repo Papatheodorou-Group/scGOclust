@@ -1,17 +1,3 @@
-#' Drosophila EMSEMBL to GO BP terms mapping table
-#' Drosophila melanogaster
-#' @name dme_tbl
-#' @format a data frame
-#' @source <https://www.ensembl.org/index.html>
-"dme_tbl"
-
-
-#' Mouse EMSEMBL to GO BP terms mapping table
-#' Mus Musculus
-#' @name mmu_tbl
-#' @format a data frame
-#' @source <https://www.ensembl.org/index.html>
-"mmu_tbl"
 
 
 #' Mouse stomach and intestine scRNA-seq data, microwell-seq

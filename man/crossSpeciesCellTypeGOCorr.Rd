@@ -32,9 +32,11 @@ calculate cross-species correlation between cell types represented by scaled GO
 \examples{
 \donttest{
 library(scGOclust)
-data(mmu_tbl)
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+mmu_tbl = ensemblToGo(species = 'mmusculus')
 data(mmu_subset)
-data(dme_tbl)
+dme_tbl = ensemblToGo(species = 'dmelanogaster')
 data(dme_subset)
 mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
  seurat_obj = mmu_subset,

@@ -30,6 +30,8 @@ get requested ensembl ID to GO mapping table
 \examples{
 \donttest{
 library(scGOclust)
-ensemblToGo(species = "mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+ensemblToGo("mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
 }
 }

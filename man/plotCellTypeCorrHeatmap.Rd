@@ -20,7 +20,9 @@ plot clustered heatmap for cell type corr
 \examples{
 \donttest{
 library(scGOclust)
-data(mmu_tbl)
+library(httr)
+httr::set_config(httr::config(ssl_verifypeer = FALSE))
+mmu_tbl = ensemblToGo(species = 'mmusculus')
 data(mmu_subset)
 
 go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
