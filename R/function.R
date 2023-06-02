@@ -30,15 +30,14 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
     electronic = c("IEA")
   )
 
-  bm <- useEnsembl(biomart = "ensembl", dataset = paste0(species, "_gene_ensembl"), ...)
-
   # Get ensembl gene ids and GO terms
 
-  message("query biomart")
+  message("start query ENSEMBL via biomaRt")
 
 
   EG2GO <- tryCatch(
     {
+      bm <- useEnsembl(biomart = "ensembl", dataset = paste0(species, "_gene_ensembl"), ...)
       getBM(mart = bm, attributes = c("ensembl_gene_id", "external_gene_name", "go_id", "name_1006", "go_linkage_type", "namespace_1003"))
     },
     warning = function(w) {
