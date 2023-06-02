@@ -3,6 +3,8 @@
 
 Author & Maintainer: Yuyao Song <ysong@ebi.ac.uk>
 
+![cran downloads](https://cranlogs.r-pkg.org/badges/grand-total/scGOclust)
+
 ### Installation
 
 1. First create the conda environment. Mamba is recommended as a faster alternative for conda.
