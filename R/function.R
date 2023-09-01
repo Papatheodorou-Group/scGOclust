@@ -98,7 +98,7 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 #' @param ensembl_to_GO ensembl_to_go mapping table from function ensemblToGo
 #' @param seurat_obj count matrix with genes to cells
 #' @param feature_type feature type of count matrix, choose from ensembl_gene_id, external_gene_name, default ensembl_gene_id
-#' @return a seurast object with GO terms as features
+#' @return a seurat object with GO terms as features
 #' @examples
 #' \donttest{
 #' library(scGOclust)
@@ -124,6 +124,10 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id") {
   message("collect data")
   counts <- as.matrix(seurat_obj@assays$RNA@counts)
+
+  if(!(feature_type %in% colnames(ensembl_to_GO))){
+    stop(paste0(feature_type, " is not in colnames(ensembl_to_GO), please check the var type"))
+  }
 
   ## pivot GO to feature type table to matrix
   go_matrix <- ensembl_to_GO %>%
@@ -207,6 +211,7 @@ analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, scale.factor = 10000, 
 #' @name getCellTypeGO
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
+#' @param norm_log1p whether or not to perform data normalisation and log1p transformation
 #' @return a table of scaled GO representation per cell type (averaged)
 #' @examples
 #' \donttest{
@@ -224,12 +229,16 @@ analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, scale.factor = 10000, 
 #' @export
 #'
 
-getCellTypeGO <- function(go_seurat_obj, cell_type_col) {
+getCellTypeGO <- function(go_seurat_obj, cell_type_col, norm_log1p = TRUE) {
   if (!(cell_type_col %in% colnames(go_seurat_obj@meta.data))) {
     stop("cell_type_col not in metadata, please check input")
   }
 
-  go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
+  if(norm_log1p){
+    message(paste0("perform normalization and log1p for ", deparse(substitute(go_seurat_obj))))
+    go_seurat_obj <- NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = 10000)
+  }
+
 
   go_seurat_obj <- ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = TRUE, scale.max = 10000) ## set scale.max to near-unlimited, also use all features
 

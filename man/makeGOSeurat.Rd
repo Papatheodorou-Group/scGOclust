@@ -14,7 +14,7 @@ makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id")
 \item{feature_type}{feature type of count matrix, choose from ensembl_gene_id, external_gene_name, default ensembl_gene_id}
 }
 \value{
-a seurast object with GO terms as features
+a seurat object with GO terms as features
 }
 \description{
 create a seurat object with GO terms
