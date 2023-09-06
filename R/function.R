@@ -167,6 +167,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
 #' @name analyzeGOSeurat
 #' @param go_seurat_obj go seurat object created by makeGOSeurat
 #' @param cell_type_col column name in mera.data storing cell type classes
+#' @param norm_log1p whether or not to perform data normalisation and log1p transformation, default TRUE
 #' @param cluster_res resolution for Seurat FindClusters
 #' @param scale.factor param for Seurat NormalizeData
 #' @param nfeatures param for Seurat FindVariableFeatures
@@ -191,12 +192,15 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
 #'
 
 
-analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, scale.factor = 10000, nfeatures = 2000, cluster_res = 1, min.dist=0.3, ...) {
+analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, norm_log1p=TRUE, scale.factor = 10000, nfeatures = 2000, cluster_res = 1, min.dist=0.3, ...) {
   if (!(cell_type_col %in% colnames(go_seurat_obj@meta.data))) {
     stop("cell_type_col not in annotation, please check input")
   }
+  if(norm_log1p){
+    message(paste0("perform normalization and log1p for ", deparse(substitute(go_seurat_obj))))
+    go_seurat_obj <- Seurat::NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = scale.factor, ...)
 
-  go_seurat_obj <- Seurat::NormalizeData(go_seurat_obj, normalization.method = "LogNormalize", scale.factor = scale.factor, ...)
+  }
   go_seurat_obj <- Seurat::FindVariableFeatures(go_seurat_obj, selection.method = "vst", nfeatures = nfeatures, ...)
   go_seurat_obj <- Seurat::ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = FALSE, ...)
   go_seurat_obj <- Seurat::RunPCA(object = go_seurat_obj, npcs = 50, verbose = FALSE, ...)
