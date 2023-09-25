@@ -453,6 +453,7 @@ crossSpeciesCellTypeGOCorrRescale <- function(species_1, species_2,
 #' plot clustered heatmap for cell type corr
 #' @name plotCellTypeCorrHeatmap
 #' @param corr_matrix correlation matrix from cellTypeGOCorr or crossSpeciesCellTypeGOCorr
+#' @param scale scale value by column, row, or default no scaling (NA)
 #' @param ... params to pass to slanter::sheatmap
 #' @examples
 #' \donttest{
@@ -478,14 +479,57 @@ crossSpeciesCellTypeGOCorrRescale <- function(species_1, species_2,
 #' @export
 #'
 
-plotCellTypeCorrHeatmap <- function(corr_matrix, ...) {
-  heatmap <- slanter::sheatmap(corr_matrix + 0.5, ...)
+plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
+
+  # round number to the lower 0.05
+  round_down_5 <- function(x){
+    y = round(x, digits = 2)
+    # handle machine precision when y = 0.05
+    if((y %% 0.1) > 0.05 + 1e-8){
+      return (round(y / 0.1, digits = 0)*0.1 - 0.05)
+    } else{
+      return (round(y / 0.1, digits = 0)*0.1)
+    }
+
+  }
+
+  # round number to the upper 0.05
+  round_up_5 <- function(x){
+    y = round(x, digits = 2)
+    # handle machine precision when y = 0.05
+    if((y %% 0.1) > 0.05 + 1e-8){
+      return (round(y / 0.1, digits = 0)*0.1)
+    } else{
+      return (round(y / 0.1, digits = 0)*0.1 + 0.05)
+    }
+
+  }
+
+
+  if(scale %in% c("column", 'row')){
+
+    heatmap <- slanter::sheatmap(corr_matrix + 0.5, scale = scale, ...)
+
+  } else if(is.na(scale)){
+
+    lower_bound = round_down_5(min(seurat_cluster_corr + 0.5))
+    upper_bound = round_up_5(max(seurat_cluster_corr + 0.5))
+
+    breaks = seq(lower_bound, upper_bound, by = 0.1)
+
+    # slanter only takes positive matrix values so we have a work around
+    heatmap <- slanter::sheatmap(corr_matrix + 0.5 , legend_breaks = breaks, legend_labels = round(breaks - 0.5, digits = 2), ...)
+
+  } else{
+
+    warning('scale = must be one of NA, row or column')
+  }
   return(heatmap)
 }
 
 
 
-#' get shared up and down regulated GO terms for al pairs of cell types
+#' get shared up and down regulated GO terms for all pairs of cell types
 #' @name getCellTypeSharedGO
 #' @param species_1 name of species one
 #' @param species_2 name of species two

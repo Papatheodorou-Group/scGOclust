@@ -2,7 +2,7 @@
 % Please edit documentation in R/function.R
 \name{getCellTypeSharedGO}
 \alias{getCellTypeSharedGO}
-\title{get shared up and down regulated GO terms for al pairs of cell types}
+\title{get shared up and down regulated GO terms for all pairs of cell types}
 \usage{
 getCellTypeSharedGO(
   species_1,
@@ -36,7 +36,7 @@ getCellTypeSharedGO(
 a list with sp1 raw, sp2 raw and shared, significant up and down regulated GO terms per cell type (pair)
 }
 \description{
-get shared up and down regulated GO terms for al pairs of cell types
+get shared up and down regulated GO terms for all pairs of cell types
 }
 \examples{
 \donttest{

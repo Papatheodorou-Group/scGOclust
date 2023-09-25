@@ -1,18 +1,18 @@
 Package: scGOclust
 Type: Package
 Title: Measuring Cell Type Similarity with Gene Ontology in Single-Cell RNA-Seq
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(person(given = "Yuyao", family = "Song", email = "ysong@ebi.ac.uk", role = c("aut", "cre", "ctb")), person(given = "Irene", family = "Papatheodorou", email = "irenep@ebi.ac.uk", role = c("aut", "ths")))
 Description: Traditional methods for analyzing single cell RNA-seq datasets focus solely on gene expression, but this package introduces a novel approach that goes beyond this limitation. Using Gene Ontology terms as features, the package allows for the functional profile of cell populations, and comparison within and between datasets from the same or different species. Our approach enables the discovery of previously unrecognized functional similarities and differences between cell types and has demonstrated success in identifying cell types' functional correspondence even between evolutionarily distant species.
-URL: https://github.com/YY-SONG0718/scGOclust
-BugReports: https://github.com/YY-SONG0718/scGOclust/issues
+URL: https://github.com/Functional-Genomics/scGOclust
+BugReports: https://github.com/Functional-Genomics/scGOclust/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
 RoxygenNote: 7.2.0
-VignetteBuilder: knitr
 Imports: limma, Seurat, biomaRt, dplyr, magrittr, stats, tibble, tidyr, Matrix, utils, networkD3, slanter
-Suggests: devtools, knitr, pheatmap, rmarkdown, httr
+Suggests: R.rsp, devtools, pheatmap, rmarkdown, httr, sf
+VignetteBuilder: R.rsp
 Depends:
     R (>= 2.10)
