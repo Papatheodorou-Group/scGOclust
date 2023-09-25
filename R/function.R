@@ -512,8 +512,8 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 
   } else if(is.na(scale)){
 
-    lower_bound = round_down_5(min(seurat_cluster_corr + 0.5))
-    upper_bound = round_up_5(max(seurat_cluster_corr + 0.5))
+    lower_bound = round_down_5(min(corr_matrix + 0.5))
+    upper_bound = round_up_5(max(corr_matrix + 0.5))
 
     breaks = seq(lower_bound, upper_bound, by = 0.1)
 
