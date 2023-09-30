@@ -1,13 +1,19 @@
 ---
-title: "scGOclust_mouse_fly_gut_vignette"
-author: "Yuyao Song"
-date: "`r Sys.Date()`"
+title: "scGOclust_vignette"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{scGOclust_vignette}
-  %\usepackage[UTF-8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 
 ## Load packages
 
@@ -40,9 +46,12 @@ library(scGOclust)
 # sometimes ensembl complains about ssh certificate has expired, this is a known issue, run this code
 httr::set_config(httr::config(ssl_verifypeer = FALSE)) 
 
-mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
-dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
+#mmu_tbl = ensemblToGo(species = 'mmusculus', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
+#dme_tbl = ensemblToGo(species = 'dmelanogaster', GO_linkage_type = c('experimental', 'phylogenetic', 'computational', 'author', 'curator' ))
 
+# here we load the example data for convenience
+data(mmu_tbl)
+data(dme_tbl)
 ```
 
 ```{r}
