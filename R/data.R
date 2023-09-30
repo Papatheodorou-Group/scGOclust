@@ -1,4 +1,5 @@
-
+# © EMBL-European Bioinformatics Institute, 2023
+# Yuyao Song ysong@ebi.ac.uk
 
 #' Mouse stomach and intestine scRNA-seq data, microwell-seq
 #' Subset to 50 cells per cell type as an example data

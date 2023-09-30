@@ -1,3 +1,6 @@
+# © EMBL-European Bioinformatics Institute, 2023
+# Yuyao Song ysong@ebi.ac.uk
+
 #' log global variables: column name in biomaRt query and markers
 #' @name globalvariables
 #' @importFrom utils globalVariables

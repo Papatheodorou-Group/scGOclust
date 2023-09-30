@@ -1,3 +1,7 @@
+# © EMBL-European Bioinformatics Institute, 2023
+# Yuyao Song ysong@ebi.ac.uk
+
+
 #' get requested ensembl ID to GO mapping table
 #' @name ensemblToGo
 #' @param species species name matching ensembl biomaRt naming, such as hsapiens, mmusculus
@@ -632,15 +636,7 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
         filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp2_sig_up_terms))
 
-      nr <- max(nrow(sp1_sig_up), nrow(sp2_sig_up))
-
-      sp1_sig_up_use <- sp1_sig_up[1:nr, ]
-      colnames(sp1_sig_up_use) <- paste0("sp1_", colnames(sp1_sig_up_use))
-
-      sp2_sig_up_use <- sp2_sig_up[1:nr, ]
-      colnames(sp2_sig_up_use) <- paste0("sp2_", colnames(sp2_sig_up_use))
-
-      shared <- cbind(sp1_sig_up_use, sp2_sig_up_use)
+      shared <- merge(sp1_sig_up, sp2_sig_up, by = 'gene', suffixes = c("_sp1", "_sp2"))
 
       shared_all <- rbind(shared_all, shared)
     }
@@ -676,28 +672,17 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
         filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp2_sig_down_terms))
 
-      nr <- max(nrow(sp1_sig_down), nrow(sp2_sig_down))
-
-      sp1_sig_down_use <- sp1_sig_down[1:nr, ]
-      colnames(sp1_sig_down_use) <- paste0("sp1_", colnames(sp1_sig_down_use))
-
-      sp2_sig_down_use <- sp2_sig_down[1:nr, ]
-      colnames(sp2_sig_down_use) <- paste0("sp2_", colnames(sp2_sig_down_use))
-
-      shared <- cbind(sp1_sig_down_use, sp2_sig_down_use)
-
+      shared <- merge(sp1_sig_up, sp2_sig_up, by = 'gene', suffixes = c("_sp1", "_sp2"))
 
       shared_all <- rbind(shared_all, shared)
     }
-
-
-    shared_all$species_1 <- species_1
-    shared_all$species_2 <- species_2
-    message("finish cel type pairs shared up and down regulated GO terms")
-
-    results <- list(sp1_markers_raw = sp1_markers, sp2_markers_raw = sp2_markers, shared_sig_markers = shared_all)
-    return(results)
   }
+  shared_all$species_1 <- species_1
+  shared_all$species_2 <- species_2
+  message("finish getting cell type pairs shared up and down regulated GO terms")
+
+  results <- list(sp1_markers_raw = sp1_markers, sp2_markers_raw = sp2_markers, shared_sig_markers = shared_all)
+  return(results)
 }
 
 #' plot Sankey diagram for cell type links above a certain threshould
