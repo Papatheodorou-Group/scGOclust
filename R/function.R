@@ -790,7 +790,7 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #' cell_type_sp2 = 'enteroendocrine cell',
 #' return_full = FALSE)
 #' }
-#' @importFrom dplyr select filter
+#' @importFrom dplyr select filter desc
 #' @importFrom magrittr %>%
 #' @export
 #'

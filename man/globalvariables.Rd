@@ -2,7 +2,7 @@
 % Please edit documentation in R/global.R
 \name{globalvariables}
 \alias{globalvariables}
-\title{log global variables: column name in biomaRt query and markers}
+\title{record some global variables: pre-defined column name in biomaRt query and markers}
 \description{
-log global variables: column name in biomaRt query and markers
+record some global variables: pre-defined column name in biomaRt query and markers
 }
