@@ -672,7 +672,7 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
         filter(gene %in% intersect) %>%
         mutate(pct_intersect = length(intersect) / length(sp2_sig_down_terms))
 
-      shared <- merge(sp1_sig_up, sp2_sig_up, by = 'gene', suffixes = c("_sp1", "_sp2"))
+      shared <- merge(sp1_sig_down, sp2_sig_down, by = 'gene', suffixes = c("_sp1", "_sp2"))
 
       shared_all <- rbind(shared_all, shared)
     }
@@ -752,6 +752,7 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #' @param cell_type_sp1 cell type from sp1 to query
 #' @param cell_type_sp2 cell type from sp2 to query
 #' @param return_full if return also pvals and logfc info, default FALSE
+#' @param arrange_avg_log2FC arrange result by decreasing mean avg_log2FC, default TRUE
 #' @return a dataframe displaying co-up or co-down regulated GO terms for the queried cell type pair
 #' @examples
 #' \donttest{
@@ -794,57 +795,56 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #' @export
 #'
 
-
-getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full = FALSE) {
+getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, return_full = FALSE, arrange_avg_log2FC = TRUE) {
 
   ## check shared_go format
-  if (!("sp1_p_val" %in% colnames(shared_go$shared_sig_markers))) {
+  if (!("p_val_sp1" %in% colnames(shared_go$shared_sig_markers))) {
     stop("Shared go table format incorrect, please re-compute using getCellTypeSharedGO")
   }
 
-  if (!(cell_type_sp1 %in% levels(factor(shared_go$shared_sig_markers[["sp1_cluster"]])))) {
+  if (!(cell_type_sp1 %in% levels(factor(shared_go$shared_sig_markers[["cluster_sp1"]])))) {
     message("available cell types from species 1: ")
     message(levels(factor(shared_go$shared_sig_markers[["sp1_cluster"]])))
     stop("cell type sp1 not in data, please check input")
   }
 
-  if (!(cell_type_sp2 %in% levels(factor(shared_go$shared_sig_markers[["sp2_cluster"]])))) {
+  if (!(cell_type_sp2 %in% levels(factor(shared_go$shared_sig_markers[["cluster_sp2"]])))) {
     message("available cell types from species 2: ")
     message(levels(factor(shared_go$shared_sig_markers[["sp2_cluster"]])))
     stop("cell type sp2 not in data, please check input")
   }
 
   if (!(return_full)) {
-    shared_go$shared_sig_markers <- shared_go$shared_sig_markers %>%
+    tbl_ct <- shared_go$shared_sig_markers %>%
       dplyr::select(
-        sp1_cluster, sp1_gene, sp1_marker_type,
-        sp2_cluster, sp2_gene, sp2_marker_type,
-      )
+        gene, cluster_sp1, marker_type_sp1,
+        cluster_sp2, marker_type_sp2,
+      ) %>%
+      dplyr::filter(cluster_sp1 == cell_type_sp1) %>%
+      dplyr::filter(cluster_sp2 == cell_type_sp2)
 
-    tbl <- shared_go$shared_sig_markers %>%
-      dplyr::filter(sp1_cluster == cell_type_sp1) %>%
-      dplyr::filter(sp2_cluster == cell_type_sp2)
+    if(arrange_avg_log2FC){
+      message("return shared terms arranged in decreasing mean avg_log2FC between species")
+      tbl_ct <- tbl_ct %>% mutate(mean_avg_log2FC = ((avg_log2FC_sp1 + avg_log2FC_sp2) / 2)) %>%
+        arrange(desc(mean_avg_log2FC))
 
+    }
 
-    tbl_1 <- tbl[, 1:3] %>% arrange(sp1_gene)
-    tbl_2 <- tbl[, 4:6] %>% arrange(sp2_gene)
-
-    tbl_final <- cbind(tbl_1, tbl_2)
-
-    return(tbl_final)
+    return(tbl_ct)
 
   } else {
 
-  tbl <- shared_go$shared_sig_markers %>%
-    dplyr::filter(sp1_cluster == cell_type_sp1) %>%
-    dplyr::filter(sp2_cluster == cell_type_sp2)
+    tbl_ct <- shared_go$shared_sig_markers %>%
+      dplyr::filter(cluster_sp1 == cell_type_sp1) %>%
+      dplyr::filter(cluster_sp2 == cell_type_sp2)
 
+    if(arrange_avg_log2FC){
+      message("return shared terms arranged in decreasing mean avg_log2FC between species")
+      tbl_ct <- tbl_ct %>% mutate(mean_avg_log2FC = ((avg_log2FC_sp1 + avg_log2FC_sp2) / 2)) %>%
+        arrange(desc(mean_avg_log2FC))
 
-  tbl_1 <- tbl[, 1:9] %>% arrange(sp1_gene)
-  tbl_2 <- tbl[, 10:20] %>% arrange(sp2_gene)
+    }
 
-  tbl_final <- cbind(tbl_1, tbl_2)
-
-  return(tbl_final)
+    return(tbl_ct)
   }
 }

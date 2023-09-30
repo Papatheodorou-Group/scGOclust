@@ -8,7 +8,8 @@ getCellTypeSharedTerms(
   shared_go,
   cell_type_sp1,
   cell_type_sp2,
-  return_full = FALSE
+  return_full = FALSE,
+  arrange_avg_log2FC = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ getCellTypeSharedTerms(
 \item{cell_type_sp2}{cell type from sp2 to query}
 
 \item{return_full}{if return also pvals and logfc info, default FALSE}
+
+\item{arrange_avg_log2FC}{arrange result by decreasing mean avg_log2FC, default TRUE}
 }
 \value{
 a dataframe displaying co-up or co-down regulated GO terms for the queried cell type pair
