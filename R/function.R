@@ -605,7 +605,7 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
   sp1_cts <- levels(factor(analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]))
   sp2_cts <- levels(factor(analyzed_go_seurat_sp2@meta.data[[cell_type_col_sp2]]))
 
-  message("collect shared up regulated terms")
+  message("collecting shared up regulated terms")
 
   shared_all <- data.frame()
   for (ct_sp1 in sp1_cts) {
@@ -643,7 +643,7 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
   }
 
 
-  message("collect shared down regulated terms")
+  message("collecting shared down regulated terms")
   for (ct_sp1 in sp1_cts) {
     for (ct_sp2 in sp2_cts) {
       sp1_sig_down <- sp1_markers %>%
