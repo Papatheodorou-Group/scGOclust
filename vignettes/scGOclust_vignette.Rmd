@@ -84,14 +84,14 @@ dme_ct_go <- getCellTypeGO(go_seurat_obj = dme_go_obj, cell_type_col = 'annotati
 
 ## 5. Calculate within-species cell type functional similariy
 
-```{r cell_type_corr_within, fig.width = 8,  fig.height = 8}
+```{r cell_type_corr_within, fig.width = 6,  fig.height = 6}
 # heatmap of Pearson's correlation coefficient of cell type average BP profiles within species
 
 mmu_corr = cellTypeGOCorr(cell_type_go = mmu_ct_go, corr_method = 'pearson')
 pheatmap(mmu_corr)
 ```
 
-```{r, fig.height = 8, fig.width = 8}
+```{r, fig.height = 6, fig.width = 6}
 dme_corr = cellTypeGOCorr(cell_type_go = dme_ct_go, corr_method = 'pearson')
 pheatmap(dme_corr)
 ```
@@ -108,7 +108,7 @@ corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanog
 ```
 
 
-```{r heatmap_corr_cross, fig.width = 9,  fig.height = 10}
+```{r heatmap_corr_cross, fig.width = 7,  fig.height = 8}
 
 # cross-species cell type profile heatmap
 
@@ -119,7 +119,7 @@ pheatmap(corr, scale = 'column', width = 9, height = 10)
 
 ```
 
-```{r sheatmap_corr_cross,  fig.width = 9,  fig.height = 10}
+```{r sheatmap_corr_cross,  fig.width = 7,  fig.height = 8}
 
 # sheatmap tries to put cells with higher values on the diagonal
 # helpful when cross-species cell type similarity signal is less clear
@@ -142,7 +142,7 @@ slanter::sheatmap((corr + 0.5), scale = 'column', width = 9, height = 10)
 mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')
 ```
 
-```{r, fig.width = 8, fig.height = 8}
+```{r, fig.width = 6, fig.height = 6}
 # UMAP plot of the analyzed cell-by-GO BP profile
 # labeled by previously specified cell annotation column in meta.data
 
@@ -154,7 +154,7 @@ DimPlot(mmu_go_analyzed, label = TRUE) + NoLegend()
 dme_go_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
 ```
 
-```{r, fig.width = 8, fig.height = 8}
+```{r, fig.width = 6, fig.height = 6}
 DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 ```
 
@@ -181,11 +181,6 @@ getCellTypeSharedTerms(shared_go = ct_shared_go,
 
 
 
-```
-
-```{r}
-
-plotCellTypeSankey(corr_matrix = corr, corr_threshould = 0.05)
 ```
 
 ```{r sessioninfo}
