@@ -34,7 +34,6 @@ library(httr)
 
 library(scGOclust)
 
-#
 ```
 
 ## 2. Load input data
