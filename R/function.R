@@ -37,16 +37,17 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
   # Get ensembl gene ids and GO terms
 
   message("start query ENSEMBL via biomaRt")
+
   bm <- tryCatch(
     {
       useEnsembl(biomart = "ensembl", dataset = paste0(species, "_gene_ensembl"), ...)
     },
     warning = function(w) {
-      message("ensembl biomaRt warning:")
+      message("ensembl biomaRt warning (useEnsembl):")
       message(w)
     },
     error = function(e) {
-      message("ensembl biomaRt error:")
+      message("ensembl biomaRt error (useEnsembl):")
       message(e)
     }
 
@@ -58,11 +59,11 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
       getBM(mart = bm, attributes = c("ensembl_gene_id", "external_gene_name", "go_id", "name_1006", "go_linkage_type", "namespace_1003"))
     },
     warning = function(w) {
-      message("ensembl biomaRt warning:")
+      message("ensembl biomaRt warning (getBM):")
       message(w)
     },
     error = function(e) {
-      message("ensembl biomaRt error:")
+      message("ensembl biomaRt error (getBM):")
       message(e)
     }
   )
@@ -819,6 +820,7 @@ getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, retu
       dplyr::select(
         gene, cluster_sp1, marker_type_sp1,
         cluster_sp2, marker_type_sp2,
+        avg_log2FC_sp1, avg_log2FC_sp2
       ) %>%
       dplyr::filter(cluster_sp1 == cell_type_sp1) %>%
       dplyr::filter(cluster_sp2 == cell_type_sp2)
