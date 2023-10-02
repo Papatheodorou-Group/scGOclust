@@ -6,7 +6,7 @@ Authors@R: c(person(given = "Yuyao", family = "Song", email = "ysong@ebi.ac.uk",
 Description: Traditional methods for analyzing single cell RNA-seq datasets focus solely on gene expression, but this package introduces a novel approach that goes beyond this limitation. Using Gene Ontology terms as features, the package allows for the functional profile of cell populations, and comparison within and between datasets from the same or different species. Our approach enables the discovery of previously unrecognized functional similarities and differences between cell types and has demonstrated success in identifying cell types' functional correspondence even between evolutionarily distant species.
 URL: https://github.com/Functional-Genomics/scGOclust
 BugReports: https://github.com/Functional-Genomics/scGOclust/issues
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
