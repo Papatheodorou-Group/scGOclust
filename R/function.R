@@ -84,7 +84,7 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
     types_in_source[[source_type]] <- type_in
   }
 
-  included_terms <- sapply(GO_linkage_type, function(x) go_source[[x]])
+  included_terms <- sapply(GO_linkage_type, function(x) paste(go_source[[x]], sep = ', ', collapse = ', '))
   message("including GO link types: ")
   message(included_terms)
 
