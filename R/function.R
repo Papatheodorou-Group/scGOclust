@@ -520,7 +520,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
     lower_bound = round_down_5(min(corr_matrix + 0.5))
     upper_bound = round_up_5(max(corr_matrix + 0.5))
 
-    breaks = seq(lower_bound, upper_bound, by = 0.1)
+    breaks = seq(lower_bound, upper_bound, by = 0.05)
 
     # slanter only takes positive matrix values so we have a work around
     heatmap <- slanter::sheatmap(corr_matrix + 0.5 , legend_breaks = breaks, legend_labels = round(breaks - 0.5, digits = 2), ...)
