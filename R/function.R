@@ -827,7 +827,8 @@ getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, retu
 
     if(arrange_avg_log2FC){
       message("return shared terms arranged in decreasing mean avg_log2FC between species")
-      tbl_ct <- tbl_ct %>% mutate(mean_avg_log2FC = ((avg_log2FC_sp1 + avg_log2FC_sp2) / 2)) %>%
+      tbl_ct <- tbl_ct %>% filter(avg_log2FC_sp1 > 0) %>% filter(avg_log2FC_sp2 > 0) %>%
+        mutate(mean_avg_log2FC = ((avg_log2FC_sp1 + avg_log2FC_sp2) / 2)) %>%
         arrange(desc(mean_avg_log2FC))
 
     }
@@ -842,7 +843,8 @@ getCellTypeSharedTerms <- function(shared_go, cell_type_sp1, cell_type_sp2, retu
 
     if(arrange_avg_log2FC){
       message("return shared terms arranged in decreasing mean avg_log2FC between species")
-      tbl_ct <- tbl_ct %>% mutate(mean_avg_log2FC = ((avg_log2FC_sp1 + avg_log2FC_sp2) / 2)) %>%
+      tbl_ct <- tbl_ct %>% filter(avg_log2FC_sp1 > 0) %>% filter(avg_log2FC_sp2 > 0) %>%
+        mutate(mean_avg_log2FC = ((avg_log2FC_sp1 + avg_log2FC_sp2) / 2)) %>%
         arrange(desc(mean_avg_log2FC))
 
     }
