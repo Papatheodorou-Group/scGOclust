@@ -6,15 +6,14 @@
 #' @name ensemblToGo
 #' @param species species name matching ensembl biomaRt naming, such as hsapiens, mmusculus
 #' @param GO_type GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'
-#' @param GO_linkage_type GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', #' defaut remove 'electronic'
-#' @param ... additional args for useEnsembl
+#' @param GO_linkage_type GO annotation evidence codes to include. Default is 'stringent', which means only including those with experimental evidence not from gene expression experiment, or from manual curation with evidence (higher confidence, not from mass-annotation pipelines). Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', 'stringent'
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
 #' \donttest{
 #' library(scGOclust)
 #' library(httr)
 #' httr::set_config(httr::config(ssl_verifypeer = FALSE))
-#' ensemblToGo("mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
+#' ensemblToGo("mmusculus", GO_type = "biological_process", GO_linkage_type = 'stringent')
 #' }
 #' @importFrom biomaRt useMart useEnsembl
 #' @importFrom magrittr %>%
@@ -22,7 +21,7 @@
 #' @export
 #'
 #'
-ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type = c("experimental", "phylogenetic", "computational", "author", "curator"), ...) {
+ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type = c("stringent"), ...) {
 
   ## GO source type code
   go_source <- list(
@@ -31,7 +30,8 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
     computational = c("ISS", "ISO", "ISA", "ISM", "IGC", "RCA"),
     author = c("TAS", "NAS"),
     curator = c("IC", "ND"),
-    electronic = c("IEA")
+    electronic = c("IEA"),
+    stringent = c("EXP", "IDA", "IPI", "IMP", "IGI",  "HTP", "HDA", "HMP", "HGI", "IKR", "RCA", "TAS", "IC")
   )
 
   # Get ensembl gene ids and GO terms

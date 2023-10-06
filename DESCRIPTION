@@ -10,7 +10,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: bzip2
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3
 Imports: limma, Seurat, biomaRt, dplyr, magrittr, stats, tibble, tidyr, Matrix, utils, networkD3, slanter
 Suggests: knitr, devtools, pheatmap, rmarkdown, httr
 VignetteBuilder: knitr

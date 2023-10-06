@@ -7,8 +7,7 @@
 ensemblToGo(
   species,
   GO_type = "biological_process",
-  GO_linkage_type = c("experimental", "phylogenetic", "computational", "author",
-    "curator"),
+  GO_linkage_type = c("stringent"),
   ...
 )
 }
@@ -17,9 +16,7 @@ ensemblToGo(
 
 \item{GO_type}{GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'}
 
-\item{GO_linkage_type}{GO annotation evidence codes set. Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', #' defaut remove 'electronic'}
-
-\item{...}{additional args for useEnsembl}
+\item{GO_linkage_type}{GO annotation evidence codes to include. Default is 'stringent', which means only including those with experimental evidence not from gene expression experiment, or from manual curation with evidence (higher confidence, not from mass-annotation pipelines). Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', 'stringent'}
 }
 \value{
 a table with ensembl to GO terms mapping including requested linkage type
@@ -32,6 +29,6 @@ get requested ensembl ID to GO mapping table
 library(scGOclust)
 library(httr)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
-ensemblToGo("mmusculus", GO_type = "biological_process", GO_linkage_type = "experimental")
+ensemblToGo("mmusculus", GO_type = "biological_process", GO_linkage_type = 'stringent')
 }
 }
