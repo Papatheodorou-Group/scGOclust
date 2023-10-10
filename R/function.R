@@ -6,7 +6,7 @@
 #' @name ensemblToGo
 #' @param species species name matching ensembl biomaRt naming, such as hsapiens, mmusculus
 #' @param GO_type GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'
-#' @param GO_linkage_type GO annotation evidence codes to include. Default is 'stringent', which means only including those with experimental evidence not from gene expression experiment, or from manual curation with evidence (higher confidence, not from mass-annotation pipelines). Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', 'stringent'
+#' @param GO_linkage_type GO annotation evidence codes to include. Default is 'standard', which means only including manually checked records (excluding IEA) and excluding those inferred from gene expression experiments to maximally suffice the species expression independence assumption. 'Stringent' means only including those with experimental evidence, also not from gene expression experiment, or from manual curation with evidence (excluding those from mass-annotation pipelines). Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', 'standard', stringent'
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
 #' \donttest{
@@ -21,7 +21,7 @@
 #' @export
 #'
 #'
-ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type = c("stringent"), ...) {
+ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type = c("standard"), ...) {
 
   ## GO source type code
   go_source <- list(
@@ -31,6 +31,7 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
     author = c("TAS", "NAS"),
     curator = c("IC", "ND"),
     electronic = c("IEA"),
+    standard = c("EXP", "IDA", "IPI", "IMP", "IGI", "HTP", "HDA", "HMP", "HGI", "IBA", "IBD", "IKR", "IRD", "ISS", "ISO", "ISA", "ISM", "IGC", "RCA", "TAS", "IC"),
     stringent = c("EXP", "IDA", "IPI", "IMP", "IGI",  "HTP", "HDA", "HMP", "HGI", "IKR", "RCA", "TAS", "IC")
   )
 
