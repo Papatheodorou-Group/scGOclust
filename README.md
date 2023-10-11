@@ -27,4 +27,4 @@ This package operates on pairs of `Seurat` objects
 Refer to `vignettes` for usage examples
 
 
-### License: MIT
+### License: GPLv3.0
