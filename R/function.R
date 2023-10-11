@@ -7,6 +7,7 @@
 #' @param species species name matching ensembl biomaRt naming, such as hsapiens, mmusculus
 #' @param GO_type GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'
 #' @param GO_linkage_type GO annotation evidence codes to include. Default is 'standard', which means only including manually checked records (excluding IEA) and excluding those inferred from gene expression experiments to maximally suffice the species expression independence assumption. 'Stringent' means only including those with experimental evidence, also not from gene expression experiment, or from manual curation with evidence (excluding those from mass-annotation pipelines). Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', 'standard', stringent'
+#' @param ... additional params for useEnsembl function called in this function
 #' @return a table with ensembl to GO terms mapping including requested linkage type
 #' @examples
 #' \donttest{
@@ -17,7 +18,7 @@
 #' }
 #' @importFrom biomaRt useMart useEnsembl
 #' @importFrom magrittr %>%
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter mutate case_when
 #' @export
 #'
 #'
@@ -93,6 +94,18 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 
   GO_terms <- GO_terms %>% dplyr::filter(go_linkage_type %in% use)
 
+  ## add source type to GO terms
+  GO_terms <- GO_terms %>%
+    mutate(evidence_type = case_when(
+      go_linkage_type %in% go_source$experimental ~ "experimental",
+      go_linkage_type %in% go_source$phylogenetic ~ "phylogenetic",
+      go_linkage_type %in% go_source$computational ~ "computational",
+      go_linkage_type %in% go_source$author ~ "author",
+      go_linkage_type %in% go_source$curator ~ "curator",
+      go_linkage_type %in% go_source$electronic ~ "electronic",
+      TRUE ~ "unknown"
+    ))
+
   return(GO_terms)
 }
 
@@ -164,6 +177,11 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
   end_time <- Sys.time()
 
   message(paste0("time used: ", round(end_time - start_time, 2), " secs"))
+
+  all_zero_terms = names(rowSums(as.matrix(go_obj@assays$RNA@counts))[which(rowSums(as.matrix(go_obj@assays$RNA@counts)) == 0)])
+  message(paste0("removing ", length(all_zero_terms)), " all zero terms")
+
+  go_obj <- go_obj[which(!(rownames(go_obj) %in% all_zero_terms)), ]
 
   message("returning GO Seurat object")
   return(go_obj)

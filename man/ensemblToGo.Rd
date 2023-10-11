@@ -17,6 +17,8 @@ ensemblToGo(
 \item{GO_type}{GO term type, choose among 'biological_process', 'molecular_function', 'cellular_component', default 'biological_process'}
 
 \item{GO_linkage_type}{GO annotation evidence codes to include. Default is 'standard', which means only including manually checked records (excluding IEA) and excluding those inferred from gene expression experiments to maximally suffice the species expression independence assumption. 'Stringent' means only including those with experimental evidence, also not from gene expression experiment, or from manual curation with evidence (excluding those from mass-annotation pipelines). Choose among 'experimental', 'phylogenetic', 'computational', 'author', 'curator', 'electronic', 'standard', stringent'}
+
+\item{...}{additional params for useEnsembl function called in this function}
 }
 \value{
 a table with ensembl to GO terms mapping including requested linkage type
