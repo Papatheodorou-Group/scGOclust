@@ -88,7 +88,10 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 
   included_terms <- sapply(GO_linkage_type, function(x) paste(go_source[[x]], sep = ', ', collapse = ', '))
   message("including GO link types: ")
-  message(included_terms)
+  for (name in names(included_terms)){
+    message(paste0(name, ": "))
+    message(included_terms[name])
+  }
 
   use <- as.character(unname(unlist(sapply(GO_linkage_type, function(x) go_source[[x]]))))
 
