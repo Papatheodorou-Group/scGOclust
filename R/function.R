@@ -32,7 +32,7 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
     author = c("TAS", "NAS"),
     curator = c("IC", "ND"),
     electronic = c("IEA"),
-    standard = c("EXP", "IDA", "IPI", "IMP", "IGI", "HTP", "HDA", "HMP", "HGI", "IBA", "IBD", "IKR", "IRD", "ISS", "ISO", "ISA", "ISM", "IGC", "RCA", "TAS", "IC"),
+    standard = c("EXP", "IDA", "IPI", "IMP", "IGI", "IEP", "HTP", "HDA", "HMP", "HGI", "IBA", "IBD", "IKR", "IRD", "ISS", "ISO", "ISA", "ISM", "IGC", "RCA", "TAS", "IC"),
     stringent = c("EXP", "IDA", "IPI", "IMP", "IGI",  "HTP", "HDA", "HMP", "HGI", "IKR", "RCA", "TAS", "IC")
   )
 
