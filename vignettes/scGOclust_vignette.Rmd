@@ -29,8 +29,8 @@ library(httr)
 ## if (!require("devtools")) install.packages("devtools")
 
 ## install latest from source
-## for reprodubcibility we do not update dependencies
-# devtools::install_github("YY-SONG0718/scGOclust", upgrade_dependencies = FALSE)
+## for reproducibility we do not update dependencies
+# devtools::install_github("Papatheodorou-Group/scGOclust", upgrade_dependencies = FALSE)
 
 library(scGOclust)
 
