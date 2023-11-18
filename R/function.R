@@ -363,7 +363,7 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
   all_cell_types_sp1 <- colnames(cell_type_go_sp1)
   all_cell_types_sp2 <- colnames(cell_type_go_sp2)
 
-  ## take intersection of GO terms
+  ## take intersection of GO terms and match order
   intersection <- intersect(rownames(cell_type_go_sp1), rownames(cell_type_go_sp2))
   cell_type_go_sp1 <- cell_type_go_sp1[intersection, ]
   cell_type_go_sp2 <- cell_type_go_sp2[intersection, ]
@@ -605,7 +605,6 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 #' @import limma
 #' @importFrom dplyr filter mutate
 #' @export
-#'crossSpeciesCellTypeGOCorrRescale
 
 
 getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, layer_use = "data", p_val_threshould = 0.01) {
