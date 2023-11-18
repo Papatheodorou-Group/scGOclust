@@ -109,25 +109,14 @@ corr = crossSpeciesCellTypeGOCorr(species_1 = 'mmusculus', species_2 = 'dmelanog
 
 ```{r heatmap_corr_cross, fig.width = 7,  fig.height = 8}
 
-# cross-species cell type profile heatmap
-
-pheatmap(corr, width = 9, height = 10)
-
-pheatmap(corr, scale = 'column', width = 9, height = 10)
-
-
-```
-
-```{r sheatmap_corr_cross,  fig.width = 7,  fig.height = 8}
-
-# sheatmap tries to put cells with higher values on the diagonal
+# tries to put cells with higher values on the diagonal
 # helpful when cross-species cell type similarity signal is less clear
 
-slanter::sheatmap((corr + 0.5), width = 9, height = 10)
+plotCellTypeCorrHeatmap(corr, width = 9, height = 10)
 
-# scale by row or column to see relative similarity
+# scale per column or row to see the relative similarity
+plotCellTypeCorrHeatmap(corr, scale = 'column', width = 9, height = 10)
 
-slanter::sheatmap((corr + 0.5), scale = 'column', width = 9, height = 10)
 
 ```
 
@@ -138,7 +127,9 @@ slanter::sheatmap((corr + 0.5), scale = 'column', width = 9, height = 10)
 ```{r analyze_GO}
 
 # analyze the cell-by-GO BP profile as a count matrix
-mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation')
+# Note that the example data has very few cells (for reducing data size), so I am using a small UMAP min_dist and small spread here. Default min_dist is 0.3 and spread is 1.
+
+mmu_go_analyzed = analyzeGOSeurat(go_seurat_obj = mmu_go_obj, cell_type_col = 'cell_type_annotation', min.dist = 0.1, spread = 0.5)
 ```
 
 ```{r, fig.width = 6, fig.height = 6}
@@ -150,7 +141,7 @@ DimPlot(mmu_go_analyzed, label = TRUE) + NoLegend()
 
 
 ```{r}
-dme_go_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation')
+dme_go_analyzed = analyzeGOSeurat(go_seurat_obj = dme_go_obj, cell_type_col = 'annotation', min_dist=0.1, spread=0.5)
 ```
 
 ```{r, fig.width = 6, fig.height = 6}
@@ -159,13 +150,15 @@ DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 
 ## 7. Get co-up and co-down regulated terms between pairs of cell types
 
-```{r shared_go, eval = FALSE}
+```{r shared_go}
 
 ## calculation takes a few minutes due to the Wilcoxon signed rank test
 
 ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation')
+```
 
-head(ct_shared_go)
+```{r view_shared_go}
+head(ct_shared_go$shared_sig_markers)
 ```
 
 ```{r shared go cell type, eval = FALSE}
@@ -184,6 +177,7 @@ getCellTypeSharedTerms(shared_go = ct_shared_go,
 
 ```{r sessioninfo}
 
+# viola
 sessionInfo()
 
 ```
