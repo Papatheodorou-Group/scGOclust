@@ -181,7 +181,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
 
   message(paste0("time used: ", round(end_time - start_time, 2), " secs"))
 
-  all_zero_terms = names(rowSums(as.matrix(go_obj@assays$RNA@counts))[which(rowSums(as.matrix(go_obj@assays$RNA@counts)) == 0)])
+  all_zero_terms = names(rowSums(as.matrix(go_obj@assays$RNA@layers$counts))[which(rowSums(as.matrix(go_obj@assays$RNA@layers$counts)) == 0)])
   message(paste0("removing ", length(all_zero_terms)), " all zero terms")
 
   go_obj <- go_obj[which(!(rownames(go_obj) %in% all_zero_terms)), ]
@@ -273,7 +273,7 @@ getCellTypeGO <- function(go_seurat_obj, cell_type_col, norm_log1p = TRUE) {
 
   go_seurat_obj <- ScaleData(object = go_seurat_obj, features = rownames(go_seurat_obj), verbose = TRUE, scale.max = 10000) ## set scale.max to near-unlimited, also use all features
 
-  tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, slot = "scale.data")
+  tbl <- AverageExpression(object = go_seurat_obj, group.by = cell_type_col, layer = "scale.data")
   return(as.data.frame(tbl[["RNA"]]))
 }
 
@@ -564,7 +564,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 #' @param analyzed_go_seurat_sp2 analyzed GO seurat object of species two
 #' @param cell_type_col_sp1 cell type column name for species 1 data
 #' @param cell_type_col_sp2 cell type column name for species 2 data
-#' @param slot_use slot to use for marker computation, default 'data' which after NormalizeData will be log1p normalized data.
+#' @param layer_use layer to use for marker computation, default 'data' which after NormalizeData will be log1p normalized data.
 #' @param p_val_threshould p value threshold for selecting DEG (p_adjust)
 #' @return a list with sp1 raw, sp2 raw and shared, significant up and down regulated GO terms per cell type (pair)
 #' @examples
@@ -594,7 +594,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 #' analyzed_go_seurat_sp2 =  dme_go_obj_analyzed,
 #' cell_type_col_sp1 = 'cell_type_annotation',
 #' cell_type_col_sp2 = 'annotation',
-#' slot_use = "data",
+#' layer_use = "data",
 #' p_val_threshould = 0.01)
 #' }
 #' @importFrom Seurat FindAllMarkers Idents
@@ -604,7 +604,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 #'
 
 
-getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, slot_use = "data", p_val_threshould = 0.01) {
+getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, layer_use = "data", p_val_threshould = 0.01) {
   if (!(cell_type_col_sp1 %in% colnames(analyzed_go_seurat_sp1@meta.data))) {
     stop("cell_type_col_sp1 not in annotation, please check input")
   }
@@ -619,10 +619,10 @@ getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, an
 
 
   message(paste0("calculate cell type marker for species ", species_1, ", this will take a while"))
-  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, slot = slot_use, test.use = "wilcox", verbose = TRUE, )
+  sp1_markers <- FindAllMarkers(object = analyzed_go_seurat_sp1, layer = layer_use, test.use = "wilcox", verbose = TRUE, )
 
   message(paste0("calculate cell type marker for species ", species_2, ", this will take a while"))
-  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, slot = slot_use, test.use = "wilcox", verbose = TRUE)
+  sp2_markers <- FindAllMarkers(object = analyzed_go_seurat_sp2, layer = layer_use, test.use = "wilcox", verbose = TRUE)
 
 
   sp1_cts <- levels(factor(analyzed_go_seurat_sp1@meta.data[[cell_type_col_sp1]]))
@@ -804,7 +804,7 @@ plotCellTypeSankey <- function(corr_matrix, corr_threshould = 0.1, ...) {
 #' analyzed_go_seurat_sp2 = dme_go_obj_analyzed,
 #' cell_type_col_sp1 = 'cell_type_annotation',
 #' cell_type_col_sp2 = 'annotation',
-#' slot_use = "data",
+#' layer_use = "data",
 #' p_val_threshould = 0.01)
 #'
 #'

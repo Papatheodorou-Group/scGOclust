@@ -11,7 +11,7 @@ getCellTypeSharedGO(
   analyzed_go_seurat_sp2,
   cell_type_col_sp1,
   cell_type_col_sp2,
-  slot_use = "data",
+  layer_use = "data",
   p_val_threshould = 0.01
 )
 }
@@ -28,7 +28,7 @@ getCellTypeSharedGO(
 
 \item{cell_type_col_sp2}{cell type column name for species 2 data}
 
-\item{slot_use}{slot to use for marker computation, default 'data' which after NormalizeData will be log1p normalized data.}
+\item{layer_use}{layer to use for marker computation, default 'data' which after NormalizeData will be log1p normalized data.}
 
 \item{p_val_threshould}{p value threshold for selecting DEG (p_adjust)}
 }
@@ -65,7 +65,7 @@ analyzed_go_seurat_sp1 =  mmu_go_obj_analyzed,
 analyzed_go_seurat_sp2 =  dme_go_obj_analyzed,
 cell_type_col_sp1 = 'cell_type_annotation',
 cell_type_col_sp2 = 'annotation',
-slot_use = "data",
+layer_use = "data",
 p_val_threshould = 0.01)
 }
 }
