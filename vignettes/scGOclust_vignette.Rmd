@@ -30,7 +30,7 @@ library(httr)
 
 ## install latest from source
 ## for reproducibility we do not update dependencies
-# devtools::install_github("Papatheodorou-Group/scGOclust", upgrade_dependencies = FALSE)
+# devtools::install_github("Papatheodorou-Group/scGOclust", upgrade = FALSE)
 
 library(scGOclust)
 
@@ -152,9 +152,9 @@ DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 
 ```{r shared_go}
 
-## calculation takes a few minutes due to the Wilcoxon signed rank test
+## calculation takes a few minutes due to the Wilcox signed rank test
 
-ct_shared_go = getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation')
+ct_shared_go = scGOclust::getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation', layer_use = 'data')
 ```
 
 ```{r view_shared_go}
@@ -169,8 +169,6 @@ getCellTypeSharedTerms(shared_go = ct_shared_go,
                        cell_type_sp1 = 'intestine_Enteroendocrine cell', 
                        cell_type_sp2 = 'enteroendocrine cell',
                        return_full = FALSE)
-
-
 
 
 ```
