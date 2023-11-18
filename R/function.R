@@ -605,6 +605,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 #' @import limma
 #' @importFrom dplyr filter mutate
 #' @export
+#'
 
 
 getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, layer_use = "data", p_val_threshould = 0.01) {
