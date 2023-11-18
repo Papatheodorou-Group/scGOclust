@@ -405,9 +405,9 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #' library(scGOclust)
 #' library(httr)
 #' httr::set_config(httr::config(ssl_verifypeer = FALSE))
-#' mmu_tbl = ensemblToGo(species = 'mmusculus')
+#' data(mmu_tbl)
 #' data(mmu_subset)
-#' dme_tbl = ensemblToGo(species = 'dmelanogaster')
+#' data(dme_tbl)
 #' data(dme_subset)
 #' mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
 #'  seurat_obj = mmu_subset,
