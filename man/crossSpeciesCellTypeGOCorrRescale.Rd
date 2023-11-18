@@ -63,6 +63,7 @@ crossSpeciesCellTypeGOCorrRescale(species_1 = 'mmusculus',
  go_seurat_obj_sp1 = mmu_go_obj,
  go_seurat_obj_sp2 = dme_go_obj,
  cell_type_col_sp1 = 'cell_type_annotation',
- cell_type_col_sp2 = 'annotation')
+ cell_type_col_sp2 = 'annotation',
+ norm_log1p_sp1=TRUE, norm_log1p_sp2=TRUE)
 }
 }

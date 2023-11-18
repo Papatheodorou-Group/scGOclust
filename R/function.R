@@ -420,7 +420,8 @@ crossSpeciesCellTypeGOCorr <- function(species_1, species_2, cell_type_go_sp1, c
 #'  go_seurat_obj_sp1 = mmu_go_obj,
 #'  go_seurat_obj_sp2 = dme_go_obj,
 #'  cell_type_col_sp1 = 'cell_type_annotation',
-#'  cell_type_col_sp2 = 'annotation')
+#'  cell_type_col_sp2 = 'annotation',
+#'  norm_log1p_sp1=TRUE, norm_log1p_sp2=TRUE)
 #' }
 #' @importFrom stats cor
 #' @export
@@ -453,9 +454,12 @@ crossSpeciesCellTypeGOCorrRescale <- function(species_1, species_2,
                                     norm_log1p = norm_log1p_sp2)
 
 
-  if (!(all(rownames(cell_type_go_sp1) == rownames(cell_type_go_sp2)))) {
+  if (!(all(sort(rownames(cell_type_go_sp1)) == sort(rownames(cell_type_go_sp2))))) {
     stop("cross-species matching of GO terms failed, please check input")
   }
+
+  cell_type_go_sp1 <- cell_type_go_sp1[sort(rownames(cell_type_go_sp1)), ]
+  cell_type_go_sp2 <- cell_type_go_sp1[sort(rownames(cell_type_go_sp2)), ]
 
   all_cell_types_sp1 <- colnames(cell_type_go_sp1)
   all_cell_types_sp2 <- colnames(cell_type_go_sp2)
@@ -601,7 +605,7 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 #' @import limma
 #' @importFrom dplyr filter mutate
 #' @export
-#'
+#'crossSpeciesCellTypeGOCorrRescale
 
 
 getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, layer_use = "data", p_val_threshould = 0.01) {
