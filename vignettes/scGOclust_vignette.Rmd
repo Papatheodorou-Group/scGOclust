@@ -150,14 +150,14 @@ DimPlot(dme_go_analyzed, label = TRUE) + NoLegend()
 
 ## 7. Get co-up and co-down regulated terms between pairs of cell types
 
-```{r shared_go}
+```{r shared_go, eval = FALSE}
 
 ## calculation takes a few minutes due to the Wilcox signed rank test
 
 ct_shared_go = scGOclust::getCellTypeSharedGO(species_1 = 'mmusculus', species_2 = 'dmelanogaster', analyzed_go_seurat_sp1 = mmu_go_analyzed, analyzed_go_seurat_sp2 = dme_go_analyzed, cell_type_col_sp1 = 'cell_type_annotation', cell_type_col_sp2 = 'annotation', layer_use = 'data')
 ```
 
-```{r view_shared_go}
+```{r view_shared_go, eval = FALSE}
 head(ct_shared_go$shared_sig_markers)
 ```
 
