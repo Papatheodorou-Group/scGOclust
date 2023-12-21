@@ -43,9 +43,9 @@ get shared up and down regulated GO terms for all pairs of cell types
 library(scGOclust)
 library(httr)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
-mmu_tbl = ensemblToGo(species = 'mmusculus')
+data(mmu_tbl)
 data(mmu_subset)
-dme_tbl = ensemblToGo(species = 'dmelanogaster')
+data(dme_tbl)
 data(dme_subset)
 
 mmu_go_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,

@@ -24,7 +24,7 @@ create a seurat object with GO terms
 library(scGOclust)
 library(httr)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
-mmu_tbl = ensemblToGo(species = 'mmusculus')
+data(mmu_tbl)
 data(mmu_subset)
 makeGOSeurat(ensembl_to_GO = mmu_tbl,
  seurat_obj = mmu_subset,

@@ -24,7 +24,7 @@ plot clustered heatmap for cell type corr
 library(scGOclust)
 library(httr)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
-mmu_tbl = ensemblToGo(species = 'mmusculus')
+data(mmu_tbl)
 data(mmu_subset)
 
 go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,

@@ -24,7 +24,7 @@ plot Sankey diagram for cell type links above a certain threshould
 library(scGOclust)
 library(httr)
 httr::set_config(httr::config(ssl_verifypeer = FALSE))
-mmu_tbl = ensemblToGo(species = 'mmusculus')
+data(mmu_tbl)
 data(mmu_subset)
 go_seurat_obj = makeGOSeurat(ensembl_to_GO = mmu_tbl,
  seurat_obj = mmu_subset,
