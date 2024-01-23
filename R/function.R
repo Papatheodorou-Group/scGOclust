@@ -45,12 +45,15 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
       useEnsembl(biomart = "ensembl", dataset = paste0(species, "_gene_ensembl"), ...)
     },
     warning = function(w) {
-      message("ensembl biomaRt warning (useEnsembl):")
+      message("ensembl biomaRt warning (useEnsembl):\n")
       message(w)
+
     },
     error = function(e) {
-      message("ensembl biomaRt error (useEnsembl):")
+      message("ensembl biomaRt temporarily unavailable, error message (useEnsembl):\n")
       message(e)
+      message("please try again later as this issue is likely to be resolved soon")
+      return(NA)
     }
 
   )
@@ -61,12 +64,14 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
       getBM(mart = bm, attributes = c("ensembl_gene_id", "external_gene_name", "go_id", "name_1006", "go_linkage_type", "namespace_1003"))
     },
     warning = function(w) {
-      message("ensembl biomaRt warning (getBM):")
+      message("ensembl biomaRt warning (getBM):\n")
       message(w)
     },
     error = function(e) {
-      message("ensembl biomaRt error (getBM):")
+      message("ensembl biomaRt temporarily unavailable, error message (getBM):\n")
       message(e)
+      message("please try again later as this issue is likely to be resolved soon")
+      return(NA)
     }
   )
 
