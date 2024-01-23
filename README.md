@@ -5,7 +5,7 @@ Author & Maintainer: Yuyao Song <ysong@ebi.ac.uk>
 
 ![cran downloads](https://cranlogs.r-pkg.org/badges/grand-total/scGOclust)
 
-**Note** main branch version is compatible with [Seurat](https://CRAN.R-project.org/package=Seurat[) and [SeuratObject](https://CRAN.R-project.org/package=SeuratObject) >= V5.0. If you are still using V4.0, please go to release scGOclust_V0.1.3.
+**Note** main branch version is compatible with [Seurat](https://CRAN.R-project.org/package=Seurat) and [SeuratObject](https://CRAN.R-project.org/package=SeuratObject) >= V5.0. If you are still using V4.0, please go to release scGOclust_V0.1.3.
 
 ### Installation
 

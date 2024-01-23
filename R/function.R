@@ -50,15 +50,14 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 
     },
     error = function(e) {
-      message("ensembl biomaRt temporarily unavailable, error message (useEnsembl):\n")
+      message("ensembl biomaRt temporarily unavailable, please try again later. Error message (useEnsembl):\n")
       message(e)
-      message("please try again later as this issue is likely to be resolved soon")
-      return(NA)
+      return(NULL)
     }
 
   )
 
-
+  if (!is.null(bm)){
   EG2GO <- tryCatch(
     {
       getBM(mart = bm, attributes = c("ensembl_gene_id", "external_gene_name", "go_id", "name_1006", "go_linkage_type", "namespace_1003"))
@@ -68,15 +67,18 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
       message(w)
     },
     error = function(e) {
-      message("ensembl biomaRt temporarily unavailable, error message (getBM):\n")
+      message("ensembl biomaRt temporarily unavailable, please try again later. Error message (getBM):\n")
       message(e)
-      message("please try again later as this issue is likely to be resolved soon")
-      return(NA)
+      return(NULL)
     }
   )
 
+  } else {
+    return(NULL)
+  }
 
 
+  if (!is.null(EG2GO)){
   # Remove blank entries
   EG2GO <- EG2GO[EG2GO$go_id != "", ]
 
@@ -115,6 +117,9 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
     ))
 
   return(GO_terms)
+  } else {
+    return(NA)
+  }
 }
 
 
