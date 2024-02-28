@@ -28,3 +28,6 @@ This package operates on pairs of `Seurat` objects
 Refer to `vignettes` for usage examples
 
 ### License: GPLv3.0
+### Citation
+
+Please cite [our preprint](https://www.biorxiv.org/content/10.1101/2024.01.09.574675v1) or the [CRAN package](https://CRAN.R-project.org/package=scGOclust). 
