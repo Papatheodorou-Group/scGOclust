@@ -82,6 +82,7 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
   # Remove blank entries
   EG2GO <- EG2GO[EG2GO$go_id != "", ]
 
+  # Remove the root terms per se
   GO_terms <- EG2GO %>%
     dplyr::filter(namespace_1003 == GO_type) %>%
     dplyr::filter(!(name_1006 %in% c("biological_process", "molecular_function", "cellular_component")))
@@ -130,6 +131,7 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 #' @param ensembl_to_GO ensembl_to_go mapping table from function ensemblToGo
 #' @param seurat_obj count matrix with genes to cells
 #' @param feature_type feature type of count matrix, choose from ensembl_gene_id, external_gene_name, default ensembl_gene_id
+#' @param go_name column name of the GO identifier in the GO mapping table, can be name or id, default name_1006 if fetched from biomaRt
 #' @return a seurat object with GO terms as features
 #' @examples
 #' \donttest{
@@ -153,18 +155,27 @@ ensemblToGo <- function(species, GO_type = "biological_process", GO_linkage_type
 #'
 #'
 
-makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id") {
+makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id", go_name = 'name_1006') {
   message("collect data")
   counts <- as.matrix(seurat_obj@assays$RNA@counts)
 
   if(!(feature_type %in% colnames(ensembl_to_GO))){
-    stop(paste0(feature_type, " is not in colnames(ensembl_to_GO), please check the var type"))
+    stop(paste0(feature_type, " is not in colnames(ensembl_to_GO), please check the column name of the feature type"))
   }
+
+  if(!(go_name %in% colnames(ensembl_to_GO))){
+    stop(paste0(go_name, " is not in colnames(ensembl_to_GO), please check the column name of the GO term names"))
+  }
+
 
   ## pivot GO to feature type table to matrix
   go_matrix <- ensembl_to_GO %>%
     dplyr::mutate(placehold = 1) %>%
-    tidyr::pivot_wider(id_cols = eval(feature_type), names_from = name_1006, values_from = placehold, values_fill = 0, values_fn = dplyr::first)
+    tidyr::pivot_wider(id_cols = eval(feature_type),
+                       names_from = eval(go_name),
+                       values_from = placehold,
+                       values_fill = 0,
+                       values_fn = dplyr::first)
 
   shared <- intersect(go_matrix[[feature_type]], rownames(counts))
 
@@ -192,7 +203,7 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
   message(paste0("time used: ", round(end_time - start_time, 2), " secs"))
 
   all_zero_terms = names(rowSums(as.matrix(go_obj@assays$RNA@layers$counts))[which(rowSums(as.matrix(go_obj@assays$RNA@layers$counts)) == 0)])
-  message(paste0("removing ", length(all_zero_terms)), " all zero terms")
+  message(paste0("removing ", length(all_zero_terms)), " GO terms with all 0 in dataset")
 
   go_obj <- go_obj[which(!(rownames(go_obj) %in% all_zero_terms)), ]
 
@@ -527,6 +538,9 @@ plotCellTypeCorrHeatmap <- function(corr_matrix, scale = NA, ...) {
 
 
 getCellTypeSharedGO <- function(species_1, species_2, analyzed_go_seurat_sp1, analyzed_go_seurat_sp2, cell_type_col_sp1, cell_type_col_sp2, layer_use = "data", p_val_threshould = 0.01) {
+
+  message("This function calls cell type markers for each species data using Seurat functions, and it can take a long time to do so. Therefore its recommended to run this function as a job in a HPC.")
+
   if (!(cell_type_col_sp1 %in% colnames(analyzed_go_seurat_sp1@meta.data))) {
     stop("cell_type_col_sp1 not in annotation, please check input")
   }

@@ -4,7 +4,12 @@
 \alias{makeGOSeurat}
 \title{create a seurat object with GO terms}
 \usage{
-makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id")
+makeGOSeurat(
+  ensembl_to_GO,
+  seurat_obj,
+  feature_type = "ensembl_gene_id",
+  go_name = "name_1006"
+)
 }
 \arguments{
 \item{ensembl_to_GO}{ensembl_to_go mapping table from function ensemblToGo}
@@ -12,6 +17,8 @@ makeGOSeurat(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene_id")
 \item{seurat_obj}{count matrix with genes to cells}
 
 \item{feature_type}{feature type of count matrix, choose from ensembl_gene_id, external_gene_name, default ensembl_gene_id}
+
+\item{go_name}{column name of the GO identifier in the GO mapping table, can be name or id, default name_1006 if fetched from biomaRt}
 }
 \value{
 a seurat object with GO terms as features
