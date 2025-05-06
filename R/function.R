@@ -242,7 +242,11 @@ makeGOSeurat <- function(ensembl_to_GO, seurat_obj, feature_type = "ensembl_gene
 
 analyzeGOSeurat <- function(go_seurat_obj, cell_type_col, norm_log1p=TRUE, scale.factor = 10000, nfeatures = 2000, cluster_res = 1, min.dist=0.3, ...) {
   if (!(cell_type_col %in% colnames(go_seurat_obj@meta.data))) {
-    stop("cell_type_col not in annotation, please check input")
+    stop("cell_type_col not in annotation, please check input.")
+  }
+  if (!('seurat_clusters' %in% colnames(go_seurat_obj@meta.data))) {
+    warning("'seurat_clusters' is presented in the metadata column names, this will be overwritten.
+            If you would like to keep annotations in this column, rename the column.")
   }
   if(norm_log1p){
     message(paste0("perform normalization and log1p for ", deparse(substitute(go_seurat_obj))))
